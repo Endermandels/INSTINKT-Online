@@ -5,6 +5,10 @@ const SPEED = 100.0
 const ACCEL = 0.7
 const FRICTION = 0.9
 
+@export var player_id := 1:
+	set(id):
+		player_id = id
+
 @onready var anim_player := $AnimationPlayer
 @onready var sprite := $Sprite2D
 

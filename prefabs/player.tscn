@@ -87,5 +87,7 @@ libraries = {
 }
 autoplay = "idle"
 
+[node name="Camera2D" type="Camera2D" parent="."]
+
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_c0r3a")
