@@ -1,0 +1,60 @@
+[gd_scene load_steps=6 format=3 uid="uid://el7mkjte4xea"]
+
+[ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_568lg"]
+
+[sub_resource type="Animation" id="Animation_s1pcw"]
+resource_name = "idle"
+length = 0.500008
+loop_mode = 1
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0833333, 0.166667, 0.25, 0.333333, 0.416667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+
+[sub_resource type="Animation" id="Animation_srcra"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ngutj"]
+_data = {
+"RESET": SubResource("Animation_srcra"),
+"idle": SubResource("Animation_s1pcw")
+}
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_568lg")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_0hdi7")
+hframes = 8
+vframes = 5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Sprite2D")
+libraries = {
+"": SubResource("AnimationLibrary_ngutj")
+}
+autoplay = "idle"
+
+[node name="Camera2D" type="Camera2D" parent="."]
