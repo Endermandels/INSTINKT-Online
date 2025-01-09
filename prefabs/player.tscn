@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=8 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_568lg"]
@@ -61,6 +61,11 @@ _data = {
 "run": SubResource("Animation_ranpq")
 }
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_c0r3a"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_568lg")
 
@@ -77,3 +82,6 @@ libraries = {
 autoplay = "idle"
 
 [node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_c0r3a")
