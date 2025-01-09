@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name Player
 
-const SPEED = 50.0
+const SPEED = 100.0
 const ACCEL = 1.0
 const FRICTION = 1.0
 
