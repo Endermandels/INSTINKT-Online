@@ -7,6 +7,11 @@ var player_scene := preload("res://prefabs/player.tscn")
 var _players_spawn_node: Node2D
 var host_mode_enabled = false
 
+func _ready() -> void:
+	if OS.has_feature("dedicated_server"):
+		print("Starting dedicated server...")
+		MultiplayerManager.become_host()
+
 func join_host():
 	print("Joining Host...")
 	var client_peer = ENetMultiplayerPeer.new()
