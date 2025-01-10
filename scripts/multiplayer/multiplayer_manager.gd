@@ -32,7 +32,8 @@ func become_host():
 	multiplayer.peer_connected.connect(_add_player)
 	multiplayer.peer_disconnected.connect(_del_player)
 	
-	_add_player()
+	if not OS.has_feature("dedicated_server"):
+		_add_player()
 
 func _add_player(id=1):
 	print("Player %s joined the game!" % id)
