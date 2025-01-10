@@ -37,4 +37,7 @@ func _add_player(id=1):
 
 func _del_player(id: int):
 	print("Player %s left the game!" % id)
-	pass
+	
+	if not _players_spawn_node.has_node(str(id)):
+		return
+	_players_spawn_node.get_node(str(id)).queue_free()
