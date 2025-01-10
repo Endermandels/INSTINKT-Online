@@ -1,33 +1,15 @@
-[gd_scene load_steps=10 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=11 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_568lg"]
+[ext_resource type="Script" path="res://addons/netfox/rollback/rollback-synchronizer.gd" id="2_5nw8e"]
 [ext_resource type="Script" path="res://scripts/multiplayer/multiplayer_input.gd" id="2_o4wky"]
+[ext_resource type="Script" path="res://addons/netfox/tick-interpolator.gd" id="3_w3vht"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_0euwh"]
 properties/0/path = NodePath(".:player_id")
 properties/0/spawn = true
-properties/0/replication_mode = 1
-properties/1/path = NodePath(".:position")
-properties/1/spawn = true
-properties/1/replication_mode = 1
-properties/2/path = NodePath(".:velocity")
-properties/2/spawn = true
-properties/2/replication_mode = 1
-properties/3/path = NodePath(".:h_dir")
-properties/3/spawn = true
-properties/3/replication_mode = 1
-properties/4/path = NodePath(".:v_dir")
-properties/4/spawn = true
-properties/4/replication_mode = 1
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_c0r3a"]
-properties/0/path = NodePath("InputSynchronizer:h_dir")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-properties/1/path = NodePath("InputSynchronizer:v_dir")
-properties/1/spawn = true
-properties/1/replication_mode = 1
+properties/0/replication_mode = 0
 
 [sub_resource type="Animation" id="Animation_srcra"]
 length = 0.001
@@ -87,15 +69,25 @@ _data = {
 "run": SubResource("Animation_ranpq")
 }
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("input")]
 script = ExtResource("1_568lg")
+input = NodePath("Input")
+
+[node name="RollbackSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root")]
+script = ExtResource("2_5nw8e")
+root = NodePath("..")
+state_properties = Array[String]([":global_transform", ":velocity"])
+input_properties = Array[String](["Input:h_dir", "Input:v_dir"])
+
+[node name="TickInterpolator" type="Node" parent="." node_paths=PackedStringArray("root")]
+script = ExtResource("3_w3vht")
+root = NodePath("..")
+properties = Array[String]([":global_transform"])
 
 [node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_0euwh")
 
-[node name="InputSynchronizer" type="MultiplayerSynchronizer" parent="."]
-unique_name_in_owner = true
-replication_config = SubResource("SceneReplicationConfig_c0r3a")
+[node name="Input" type="Node" parent="."]
 script = ExtResource("2_o4wky")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
