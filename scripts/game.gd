@@ -3,6 +3,7 @@ class_name Lobby
 
 @onready var host := $MultiplayerHUD/Panel/VBoxContainer/Host
 @onready var join := $MultiplayerHUD/Panel/VBoxContainer/Join
+@onready var ip_address_text := $MultiplayerHUD/Panel/IPAddress
 @onready var multiplayer_hud := $MultiplayerHUD
 @onready var tile_map := $TileMapLayer
 
@@ -12,7 +13,10 @@ func _ready():
 	join.connect("pressed", _on_join_pressed)
 
 func _on_join_pressed():
-	MultiplayerManager.join_host()
+	if ip_address_text.text == "":
+		print("Enter IP Server IP Address")
+		return
+	MultiplayerManager.join_host(ip_address_text.text)
 	multiplayer_hud.hide()
 	tile_map.show()
 

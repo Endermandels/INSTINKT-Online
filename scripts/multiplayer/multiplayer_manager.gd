@@ -1,7 +1,6 @@
 extends Node
 
 const SERVER_PORT = 4000
-const SERVER_IP = "localhost"
 
 var player_scene := preload("res://prefabs/player.tscn")
 var _players_spawn_node: Node2D
@@ -12,10 +11,10 @@ func _ready() -> void:
 		print("Starting dedicated server...")
 		MultiplayerManager.become_host()
 
-func join_host():
+func join_host(server_ip: String = "localhost"):
 	print("Joining Host...")
 	var client_peer = ENetMultiplayerPeer.new()
-	client_peer.create_client(SERVER_IP, SERVER_PORT)
+	client_peer.create_client(server_ip, SERVER_PORT)
 	multiplayer.multiplayer_peer = client_peer # establishes that this instance is a client
 
 func become_host():
