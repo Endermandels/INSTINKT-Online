@@ -5,6 +5,7 @@ const SERVER_IP = "localhost"
 
 var player_scene := preload("res://prefabs/player.tscn")
 var _players_spawn_node: Node2D
+var host_mode_enabled = false
 
 func join_host():
 	print("Joining Host...")
@@ -14,6 +15,8 @@ func join_host():
 
 func become_host():
 	print("Becoming Host...")
+	
+	host_mode_enabled = true
 	
 	# Only need this on server because that's where players are added to the game
 	_players_spawn_node = get_tree().get_current_scene().get_node("Players")
