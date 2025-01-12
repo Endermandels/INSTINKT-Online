@@ -4,6 +4,8 @@ class_name MultiplayerInput
 var h_dir: float = 0.0 # horizontal direction
 var v_dir: float = 0.0 # vertical direction
 
+@export var chat_box: ChatBox
+
 func _ready():
 	NetworkTime.before_tick_loop.connect(_gather)
 	
@@ -21,5 +23,9 @@ func _gather():
 	if not is_multiplayer_authority():
 		return
 	
-	h_dir = Input.get_axis("ui_left", "ui_right")
-	v_dir = Input.get_axis("ui_up", "ui_down")
+	if not chat_box.visible:
+		h_dir = Input.get_axis("ui_left", "ui_right")
+		v_dir = Input.get_axis("ui_up", "ui_down")
+	else:
+		h_dir = 0
+		v_dir = 0
