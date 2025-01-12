@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://addons/netfox/rollback/rollback-synchronizer.gd" id="2_5nw8e"]
 [ext_resource type="Script" path="res://scripts/multiplayer/multiplayer_input.gd" id="2_o4wky"]
 [ext_resource type="Script" path="res://addons/netfox/tick-interpolator.gd" id="3_w3vht"]
-[ext_resource type="Script" path="res://scripts/player/chat_box.gd" id="6_vcuau"]
+[ext_resource type="PackedScene" uid="uid://fr25tpnefc5j" path="res://prefabs/hud.tscn" id="6_wh2rb"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_0euwh"]
 properties/0/path = NodePath(".:player_id")
@@ -89,9 +89,9 @@ properties = Array[String]([":global_transform"])
 [node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_0euwh")
 
-[node name="Input" type="Node" parent="." node_paths=PackedStringArray("chat_box")]
+[node name="Input" type="Node" parent="." node_paths=PackedStringArray("hud")]
 script = ExtResource("2_o4wky")
-chat_box = NodePath("../HUD/ChatBox")
+hud = NodePath("../HUD")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_0hdi7")
@@ -107,33 +107,4 @@ autoplay = "idle"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
-[node name="HUD" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="ChatBox" type="LineEdit" parent="HUD" node_paths=PackedStringArray("chat_display_label")]
-layout_mode = 2
-offset_left = -154.0
-offset_top = 69.0
-offset_right = -114.0
-offset_bottom = 85.0
-theme_override_font_sizes/font_size = 8
-placeholder_text = "Type Here"
-alignment = 1
-max_length = 50
-expand_to_text_length = true
-script = ExtResource("6_vcuau")
-chat_display_label = NodePath("../ChatDisplayContainer/Label")
-
-[node name="ChatDisplayContainer" type="CenterContainer" parent="HUD"]
-layout_mode = 0
-offset_top = -16.0
-offset_right = 40.0
-offset_bottom = 24.0
-use_top_left = true
-
-[node name="Label" type="Label" parent="HUD/ChatDisplayContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 8
+[node name="HUD" parent="." instance=ExtResource("6_wh2rb")]

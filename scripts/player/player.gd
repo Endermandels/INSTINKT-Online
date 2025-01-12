@@ -10,7 +10,7 @@ const FRICTION = 0.9
 @onready var sprite := $Sprite2D
 @onready var camera := $Camera2D
 @onready var rollback_synchronizer := $RollbackSynchronizer
-@onready var chat_box := $HUD/ChatBox
+@onready var hud := $HUD
 
 @export var input: MultiplayerInput
 @export var player_id := 1:
@@ -22,7 +22,7 @@ func _ready() -> void:
 	if multiplayer.get_unique_id() == player_id:
 		# Only this player should have an active camera
 		camera.make_current()
-		chat_box.player_id = player_id
+		hud.set_player_id(player_id)
 	else:
 		# All other players should not be active in the same client
 		camera.enabled = false

@@ -1,0 +1,17 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://cne60462k31hi"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i5mdx"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+anti_aliasing_size = 0.5
+
+[resource]
+Label/styles/normal = SubResource("StyleBoxFlat_i5mdx")

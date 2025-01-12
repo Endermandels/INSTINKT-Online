@@ -38,6 +38,7 @@ enabled=PackedStringArray("res://addons/netfox.internals/plugin.cfg", "res://add
 
 [gui]
 
+theme/custom="res://assets/HUD_theme.tres"
 theme/custom_font="res://assets/dpcomic.ttf"
 theme/default_font_antialiasing=0
 
