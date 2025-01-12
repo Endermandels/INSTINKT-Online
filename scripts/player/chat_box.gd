@@ -3,6 +3,8 @@ class_name ChatBox
 
 var player_id = 0
 
+@export var chat_display_label: Label
+
 func _ready():
 	hide()
 	self.connect("text_submitted", _on_chat_box_text_submitted)
@@ -15,6 +17,7 @@ func _handle_toggle():
 
 func _on_chat_box_text_submitted(submitted_string: String):
 	print(submitted_string)
+	chat_display_label.text = submitted_string
 	clear()
 
 func _process(delta: float) -> void:

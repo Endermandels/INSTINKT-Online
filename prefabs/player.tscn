@@ -113,7 +113,7 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="ChatBox" type="LineEdit" parent="HUD"]
+[node name="ChatBox" type="LineEdit" parent="HUD" node_paths=PackedStringArray("chat_display_label")]
 layout_mode = 2
 offset_left = -154.0
 offset_top = 69.0
@@ -125,3 +125,15 @@ alignment = 1
 max_length = 50
 expand_to_text_length = true
 script = ExtResource("6_vcuau")
+chat_display_label = NodePath("../ChatDisplayContainer/Label")
+
+[node name="ChatDisplayContainer" type="CenterContainer" parent="HUD"]
+layout_mode = 0
+offset_top = -16.0
+offset_right = 40.0
+offset_bottom = 24.0
+use_top_left = true
+
+[node name="Label" type="Label" parent="HUD/ChatDisplayContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
