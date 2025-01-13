@@ -1,10 +1,12 @@
 extends Node
 class_name MultiplayerInput
 
+# Synced
 var h_dir: float = 0.0 # horizontal direction
 var v_dir: float = 0.0 # vertical direction
 
-@export var hud: HUD
+# Client-side
+@export var chat: Chat
 
 var pause_input = false
 
@@ -16,16 +18,16 @@ func _ready():
 		set_process(false)
 		set_physics_process(false)
 	
-	hud.connect("chat_opened", _on_hud_chat_opened)
-	hud.connect("chat_closed", _on_hud_chat_closed)
+	chat.connect("chat_opened", _on_chat_opened)
+	chat.connect("chat_closed", _on_chat_closed)
 	
 	h_dir = Input.get_axis("ui_left", "ui_right")
 	v_dir = Input.get_axis("ui_up", "ui_down")
 
-func _on_hud_chat_opened():
+func _on_chat_opened():
 	pause_input = true
 
-func _on_hud_chat_closed():
+func _on_chat_closed():
 	pause_input = false
 
 func _gather():

@@ -1,8 +1,6 @@
 extends Control
 class_name Chat
 
-var player_id = 0
-
 @onready var chat_display_label := $ChatDisplayContainer/Label
 @onready var chat_box := $ChatBox
 @onready var chat_display_timer := $ChatDisplayTimer
@@ -11,6 +9,7 @@ var tween: Tween = null
 
 signal chat_opened
 signal chat_closed
+signal sent_message(message: String)
 
 func _ready():
 	chat_box.hide()
@@ -28,21 +27,35 @@ func _handle_toggle():
 			chat_closed.emit()
 
 func _on_chat_box_text_submitted(submitted_string: String):
-	if submitted_string == "":
+	if submitted_string.strip_edges() == "":
 		return
-	if tween:
-		tween.kill()
-	chat_display_label.text = submitted_string
-	chat_display_label.modulate.a = 1
-	chat_display_timer.start()
+	
+	# Send message to server
+	send_message.rpc_id(1, submitted_string.strip_edges())
 	chat_box.clear()
+
+@rpc("any_peer", "call_local", "reliable")
+func send_message(message: String):
+	var sender_id = multiplayer.get_remote_sender_id()
+	print("Player %s sent: %s" % [sender_id, message])
+	update_chat_label.rpc(message)
+
+@rpc("any_peer", "call_local", "reliable")
+func update_chat_label(message: String):
+	if message != "" and message != chat_display_label.text:
+		if tween:
+			tween.kill()
+		chat_display_label.text = message
+		chat_display_label.modulate.a = 1
+		chat_display_timer.start()
 
 func _on_chat_display_timer_timeout():
 	tween = get_tree().create_tween()
 	tween.tween_property(chat_display_label, "modulate:a", 0, 1)
 
 func _process(delta: float) -> void:
-	if not multiplayer.is_server() or MultiplayerManager.host_mode_enabled and \
-			multiplayer.get_unique_id() == player_id:
-		# Current Player only
-		_handle_toggle()
+	if not is_multiplayer_authority():
+		return
+	
+	# Current Player only
+	_handle_toggle()

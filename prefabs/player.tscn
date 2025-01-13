@@ -1,11 +1,12 @@
-[gd_scene load_steps=12 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=13 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
 [ext_resource type="Script" path="res://addons/netfox/rollback/rollback-synchronizer.gd" id="2_5nw8e"]
 [ext_resource type="Script" path="res://scripts/multiplayer/multiplayer_input.gd" id="2_o4wky"]
 [ext_resource type="Script" path="res://addons/netfox/tick-interpolator.gd" id="3_w3vht"]
-[ext_resource type="PackedScene" uid="uid://fr25tpnefc5j" path="res://prefabs/hud.tscn" id="6_wh2rb"]
+[ext_resource type="Theme" uid="uid://cne60462k31hi" path="res://assets/HUD_theme.tres" id="6_hscjn"]
+[ext_resource type="Script" path="res://scripts/player/hud/chat_box.gd" id="8_p4sqx"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_0euwh"]
 properties/0/path = NodePath(".:player_id")
@@ -70,8 +71,9 @@ _data = {
 "run": SubResource("Animation_ranpq")
 }
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("input")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "input")]
 script = ExtResource("1_568lg")
+chat = NodePath("HUD/Chat")
 input = NodePath("Input")
 
 [node name="RollbackSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root")]
@@ -89,9 +91,9 @@ properties = Array[String]([":global_transform"])
 [node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_0euwh")
 
-[node name="Input" type="Node" parent="." node_paths=PackedStringArray("hud")]
+[node name="Input" type="Node" parent="." node_paths=PackedStringArray("chat")]
 script = ExtResource("2_o4wky")
-hud = NodePath("../HUD")
+chat = NodePath("../HUD/Chat")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_0hdi7")
@@ -107,4 +109,42 @@ autoplay = "idle"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
-[node name="HUD" parent="." instance=ExtResource("6_wh2rb")]
+[node name="HUD" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme = ExtResource("6_hscjn")
+
+[node name="Chat" type="Control" parent="HUD"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("8_p4sqx")
+
+[node name="ChatBox" type="LineEdit" parent="HUD/Chat"]
+layout_mode = 2
+offset_left = -154.0
+offset_top = 69.0
+offset_right = -114.0
+offset_bottom = 85.0
+theme_override_font_sizes/font_size = 8
+placeholder_text = "Type Here"
+max_length = 50
+expand_to_text_length = true
+
+[node name="ChatDisplayContainer" type="CenterContainer" parent="HUD/Chat"]
+layout_mode = 0
+offset_top = -21.0
+offset_right = 40.0
+offset_bottom = 19.0
+use_top_left = true
+
+[node name="Label" type="Label" parent="HUD/Chat/ChatDisplayContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "asdflkas"
+
+[node name="ChatDisplayTimer" type="Timer" parent="HUD/Chat"]
+wait_time = 7.0
+one_shot = true
