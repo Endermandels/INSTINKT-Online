@@ -14,8 +14,7 @@ func _ready():
 
 func _on_join_pressed():
 	if ip_address_text.text == "":
-		print("Enter IP Server IP Address")
-		return
+		ip_address_text.text = "localhost"
 	MultiplayerManager.join_host(ip_address_text.text)
 	multiplayer_hud.hide()
 	tile_map.show()
