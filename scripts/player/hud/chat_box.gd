@@ -24,6 +24,8 @@ func _handle_toggle():
 			chat_box.call_deferred("grab_focus")
 			chat_opened.emit()
 		else:
+			chat_box.call_deferred("release_focus")
+			chat_box.clear()
 			chat_closed.emit()
 
 func _on_chat_box_text_submitted(submitted_string: String):
@@ -37,15 +39,15 @@ func _on_chat_box_text_submitted(submitted_string: String):
 @rpc("any_peer", "call_local", "reliable")
 func send_message(message: String):
 	var sender_id = multiplayer.get_remote_sender_id()
-	print("Player %s sent: %s" % [sender_id, message])
-	update_chat_label.rpc(message)
+	print("Player %s messaged: %s" % [sender_id, message])
+	update_chat_label.rpc(message) # Update the chat message across all clients
 
 @rpc("any_peer", "call_local", "reliable")
 func update_chat_label(message: String):
-	if message != "" and message != chat_display_label.text:
+	if message.strip_edges() != "" and message != chat_display_label.text:
 		if tween:
 			tween.kill()
-		chat_display_label.text = message
+		chat_display_label.text = message.strip_edges()
 		chat_display_label.modulate.a = 1
 		chat_display_timer.start()
 

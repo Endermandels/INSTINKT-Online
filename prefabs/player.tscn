@@ -130,7 +130,7 @@ offset_right = -114.0
 offset_bottom = 85.0
 theme_override_font_sizes/font_size = 8
 placeholder_text = "Type Here"
-max_length = 50
+max_length = 90
 expand_to_text_length = true
 
 [node name="ChatDisplayContainer" type="CenterContainer" parent="HUD/Chat"]
