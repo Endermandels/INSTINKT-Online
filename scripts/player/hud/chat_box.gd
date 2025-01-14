@@ -15,6 +15,7 @@ func _ready():
 	chat_box.hide()
 	chat_display_label.modulate.a = 0
 	chat_box.connect("text_submitted", _on_chat_box_text_submitted)
+	chat_box.connect("text_changed", _on_chat_box_text_changed)
 	chat_display_timer.connect("timeout", _on_chat_display_timer_timeout)
 
 func _handle_toggle():
@@ -36,6 +37,20 @@ func _on_chat_box_text_submitted(submitted_string: String):
 	send_message.rpc_id(1, submitted_string.strip_edges())
 	chat_box.clear()
 
+func _on_chat_box_text_changed(new_text: String):
+	show_typing_label.rpc()
+
+@rpc("any_peer", "call_local", "reliable")
+func show_typing_label():
+	if chat_display_label.modulate.a > 0 and chat_display_label.text != ". . .":
+		return
+	if tween:
+		tween.kill()
+		tween = null
+	chat_display_label.text = ". . ."
+	chat_display_label.modulate.a = 1
+	chat_display_timer.start()
+
 @rpc("any_peer", "call_local", "reliable")
 func send_message(message: String):
 	var sender_id = multiplayer.get_remote_sender_id()
@@ -47,6 +62,7 @@ func update_chat_label(message: String):
 	if message.strip_edges() != "" and message != chat_display_label.text:
 		if tween:
 			tween.kill()
+			tween = null
 		chat_display_label.text = message.strip_edges()
 		chat_display_label.modulate.a = 1
 		chat_display_timer.start()

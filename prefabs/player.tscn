@@ -143,7 +143,7 @@ use_top_left = true
 [node name="Label" type="Label" parent="HUD/Chat/ChatDisplayContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
-text = "asdflkas"
+text = ". . ."
 
 [node name="ChatDisplayTimer" type="Timer" parent="HUD/Chat"]
 wait_time = 7.0
