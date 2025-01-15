@@ -1,9 +1,11 @@
-extends Node
+extends Node2D
 class_name MultiplayerInput
 
 # Synced
 var h_dir: float = 0.0 # horizontal direction
 var v_dir: float = 0.0 # vertical direction
+var use_special: bool = false
+var mouse_pos: Vector2 = Vector2.ZERO
 
 # Client-side
 @export var chat: Chat
@@ -23,6 +25,7 @@ func _ready():
 	
 	h_dir = Input.get_axis("ui_left", "ui_right")
 	v_dir = Input.get_axis("ui_up", "ui_down")
+	use_special = Input.is_action_just_pressed("special")
 
 func _on_chat_opened():
 	pause_input = true
@@ -36,6 +39,12 @@ func _gather():
 	if not is_multiplayer_authority():
 		return
 	
+	# Allow people to spray while chatting :P
+	use_special = Input.is_action_pressed("special")
+	if use_special:
+		mouse_pos = get_global_mouse_position()
+	
+	# Do not allow player to move while chatting
 	if pause_input:
 		h_dir = 0
 		v_dir = 0

@@ -13,6 +13,7 @@ const FRICTION = 0.9
 
 # Giving Client Authority
 @export var chat: Chat
+@export var spray: Spray
 @export var input: MultiplayerInput
 @export var player_id := 1:
 	set(id):
@@ -31,6 +32,10 @@ func _ready() -> void:
 	rollback_synchronizer.process_settings() # Call after establishing authority
 
 func _apply_animations(delta: float):
+	# Do nothing while spraying
+	if anim_player.current_animation == "spray":
+		return
+	
 	var h_dir := input.h_dir
 	
 	if h_dir < 0:
@@ -43,6 +48,9 @@ func _apply_animations(delta: float):
 	elif velocity.length() < 20:
 		anim_player.play("idle")
 
+	if input.use_special:
+		anim_player.play("spray")
+
 func _rollback_tick(delta: float, tick: float, is_fresh: bool):
 	_apply_movement(delta)
 
@@ -51,6 +59,9 @@ func _apply_movement(delta: float):
 	var v_dir = input.v_dir
 	var dir := Vector2(h_dir, v_dir)
 	
+	# Do not move while playing the spray animation
+	if anim_player.current_animation == "spray":
+		dir = Vector2.ZERO
 	
 	if dir != Vector2.ZERO:
 		velocity = velocity.lerp(dir*SPEED, ACCEL)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=18 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
@@ -6,12 +6,22 @@
 [ext_resource type="Script" path="res://scripts/multiplayer/multiplayer_input.gd" id="2_o4wky"]
 [ext_resource type="Script" path="res://addons/netfox/tick-interpolator.gd" id="3_w3vht"]
 [ext_resource type="Theme" uid="uid://cne60462k31hi" path="res://assets/HUD_theme.tres" id="6_hscjn"]
+[ext_resource type="Script" path="res://scripts/player/spray.gd" id="6_mf2j2"]
+[ext_resource type="Texture2D" uid="uid://dyd6pcjwgfxil" path="res://assets/art/Spray Sprite Sheet.png" id="8_81rfy"]
 [ext_resource type="Script" path="res://scripts/player/hud/chat_box.gd" id="8_p4sqx"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_0euwh"]
 properties/0/path = NodePath(".:player_id")
 properties/0/spawn = true
 properties/0/replication_mode = 0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_eah1l"]
+radius = 7.0
+height = 128.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6gd3c"]
+radius = 4.0
+height = 12.0
 
 [sub_resource type="Animation" id="Animation_srcra"]
 length = 0.001
@@ -64,24 +74,44 @@ tracks/0/keys = {
 "values": [8, 9, 10, 11, 12, 13, 14, 15]
 }
 
+[sub_resource type="Animation" id="Animation_jphks"]
+resource_name = "spray"
+length = 0.666675
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0833333, 0.166667, 0.416667, 0.583333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [16, 17, 18, 19, 20]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ngutj"]
 _data = {
 "RESET": SubResource("Animation_srcra"),
 "idle": SubResource("Animation_s1pcw"),
-"run": SubResource("Animation_ranpq")
+"run": SubResource("Animation_ranpq"),
+"spray": SubResource("Animation_jphks")
 }
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "input")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "spray", "input")]
+collision_mask = 0
 script = ExtResource("1_568lg")
 chat = NodePath("HUD/Chat")
+spray = NodePath("Spray")
 input = NodePath("Input")
 
 [node name="RollbackSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root")]
 script = ExtResource("2_5nw8e")
 root = NodePath("..")
 enable_prediction = true
-state_properties = Array[String]([":global_transform", ":velocity"])
-input_properties = Array[String](["Input:h_dir", "Input:v_dir"])
+state_properties = Array[String]([":global_transform", ":velocity", "Spray:rotation"])
+input_properties = Array[String](["Input:h_dir", "Input:v_dir", "Input:use_special", "Input:mouse_pos"])
 
 [node name="TickInterpolator" type="Node" parent="." node_paths=PackedStringArray("root")]
 script = ExtResource("3_w3vht")
@@ -91,9 +121,33 @@ properties = Array[String]([":global_transform"])
 [node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_0euwh")
 
-[node name="Input" type="Node" parent="." node_paths=PackedStringArray("chat")]
+[node name="Input" type="Node2D" parent="." node_paths=PackedStringArray("chat")]
 script = ExtResource("2_o4wky")
 chat = NodePath("../HUD/Chat")
+
+[node name="Spray" type="Node2D" parent="." node_paths=PackedStringArray("input")]
+script = ExtResource("6_mf2j2")
+input = NodePath("../Input")
+
+[node name="Sprite2D" type="Sprite2D" parent="Spray"]
+position = Vector2(7.62939e-06, -1.90735e-06)
+rotation = -0.380482
+scale = Vector2(4, 2)
+texture = ExtResource("8_81rfy")
+offset = Vector2(16, -0.5)
+vframes = 5
+
+[node name="Area2D" type="Area2D" parent="Spray"]
+position = Vector2(59.4231, -23.7676)
+rotation = -0.380482
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spray/Area2D"]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_eah1l")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_6gd3c")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_0hdi7")
