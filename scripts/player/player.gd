@@ -40,8 +40,10 @@ func _apply_animations(delta: float):
 	
 	if h_dir < 0:
 		sprite.flip_h = true
+		spray.position.x = 4
 	elif h_dir > 0:
 		sprite.flip_h = false
+		spray.position.x = -4
 	
 	if velocity.length() > 99:
 		anim_player.play("run")
