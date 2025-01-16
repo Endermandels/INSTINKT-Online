@@ -1,12 +1,14 @@
-[gd_scene load_steps=18 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=22 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
 [ext_resource type="Script" path="res://addons/netfox/rollback/rollback-synchronizer.gd" id="2_5nw8e"]
 [ext_resource type="Script" path="res://scripts/multiplayer/multiplayer_input.gd" id="2_o4wky"]
 [ext_resource type="Script" path="res://addons/netfox/tick-interpolator.gd" id="3_w3vht"]
+[ext_resource type="Script" path="res://scripts/player/spray_hurtbox.gd" id="4_wpyme"]
 [ext_resource type="Theme" uid="uid://cne60462k31hi" path="res://assets/HUD_theme.tres" id="6_hscjn"]
 [ext_resource type="Script" path="res://scripts/player/spray.gd" id="6_mf2j2"]
+[ext_resource type="Script" path="res://scripts/stats.gd" id="7_j2tcp"]
 [ext_resource type="Texture2D" uid="uid://dyd6pcjwgfxil" path="res://assets/art/Spray Sprite Sheet.png" id="8_81rfy"]
 [ext_resource type="Script" path="res://scripts/player/hud/chat_box.gd" id="8_p4sqx"]
 
@@ -19,9 +21,19 @@ properties/0/replication_mode = 0
 radius = 7.0
 height = 128.0
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sks23"]
+radius = 8.0
+height = 26.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hxqn1"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(10, 1, 1)
+gravity = Vector3(0, 98, 0)
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6gd3c"]
 radius = 4.0
-height = 12.0
+height = 14.0
 
 [sub_resource type="Animation" id="Animation_srcra"]
 length = 0.001
@@ -134,6 +146,9 @@ properties = Array[String]([":global_transform"])
 [node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_0euwh")
 
+[node name="Stats" type="Node" parent="."]
+script = ExtResource("7_j2tcp")
+
 [node name="Input" type="Node2D" parent="." node_paths=PackedStringArray("chat")]
 script = ExtResource("2_o4wky")
 chat = NodePath("../HUD/Chat")
@@ -142,7 +157,7 @@ chat = NodePath("../HUD/Chat")
 position = Vector2(-4, 0)
 script = ExtResource("6_mf2j2")
 input = NodePath("../Input")
-spray_fade_duration = 0.4
+spray_fade_duration = 0.3
 
 [node name="Sprite2D" type="Sprite2D" parent="Spray"]
 scale = Vector2(4, 2)
@@ -153,19 +168,43 @@ vframes = 5
 [node name="Area2D" type="Area2D" parent="Spray/Sprite2D"]
 position = Vector2(16, 9.53675e-07)
 scale = Vector2(0.25, 0.5)
+collision_layer = 0
+collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spray/Sprite2D/Area2D"]
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_eah1l")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-rotation = 1.5708
-shape = SubResource("CapsuleShape2D_6gd3c")
-
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_0hdi7")
 hframes = 8
 vframes = 5
+
+[node name="SprayHurtbox" type="Area2D" parent="." node_paths=PackedStringArray("stats", "sprite")]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("4_wpyme")
+stats = NodePath("../Stats")
+sprite = NodePath("../Sprite2D")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SprayHurtbox"]
+position = Vector2(0, -2)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_sks23")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="SprayHurtbox"]
+modulate = Color(0.905882, 1, 0, 1)
+position = Vector2(0, -6)
+process_material = SubResource("ParticleProcessMaterial_hxqn1")
+lifetime = 0.5
+
+[node name="SprayTimer" type="Timer" parent="SprayHurtbox"]
+wait_time = 60.0
+one_shot = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_6gd3c")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../Sprite2D")
