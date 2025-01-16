@@ -113,11 +113,10 @@ _data = {
 "spray": SubResource("Animation_jphks")
 }
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "spray", "input")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "input")]
 collision_mask = 0
 script = ExtResource("1_568lg")
 chat = NodePath("HUD/Chat")
-spray = NodePath("Spray")
 input = NodePath("Input")
 
 [node name="RollbackSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root")]
@@ -143,9 +142,9 @@ chat = NodePath("../HUD/Chat")
 position = Vector2(-4, 0)
 script = ExtResource("6_mf2j2")
 input = NodePath("../Input")
+spray_fade_duration = 0.4
 
 [node name="Sprite2D" type="Sprite2D" parent="Spray"]
-position = Vector2(7.62939e-06, -1.90735e-06)
 scale = Vector2(4, 2)
 texture = ExtResource("8_81rfy")
 offset = Vector2(16, -0.5)

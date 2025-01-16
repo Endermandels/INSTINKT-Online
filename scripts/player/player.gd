@@ -10,16 +10,15 @@ const FRICTION = 0.9
 @onready var sprite := $Sprite2D
 @onready var camera := $Camera2D
 @onready var rollback_synchronizer := $RollbackSynchronizer
+@onready var spray := $Spray
 
 # Giving Client Authority
 @export var chat: Chat
-@export var spray: Spray
 @export var input: MultiplayerInput
 @export var player_id := 1:
 	set(id):
 		player_id = id
 		input.set_multiplayer_authority(id) # Give client authority over inputs
-		chat.set_multiplayer_authority(id) # Give client authority over chat
 
 func _ready() -> void:
 	if multiplayer.get_unique_id() == player_id:
