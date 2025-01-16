@@ -49,4 +49,4 @@ func _on_tween_finished():
 
 func _on_area_entered(area: Area2D):
 	if area.get_parent() != get_parent():
-		area.get_sprayed()
+		area.get_sprayed.rpc()

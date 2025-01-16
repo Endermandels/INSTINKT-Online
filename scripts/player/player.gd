@@ -19,6 +19,7 @@ const FRICTION = 0.9
 	set(id):
 		player_id = id
 		input.set_multiplayer_authority(id) # Give client authority over inputs
+		chat.set_multiplayer_authority(id) # Give client authority over chat
 
 func _ready() -> void:
 	if multiplayer.get_unique_id() == player_id:

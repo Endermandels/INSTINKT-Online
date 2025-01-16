@@ -51,7 +51,8 @@ func _on_chat_box_text_changed(new_text: String):
 
 @rpc("any_peer", "call_local", "reliable")
 func _on_chat_closed():
-	chat_display_label.modulate.a = 0
+	if chat_display_label.text == ". . .":
+		chat_display_label.modulate.a = 0
 
 @rpc("any_peer", "call_local", "reliable")
 func send_message(message: String):

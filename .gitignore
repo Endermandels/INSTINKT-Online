@@ -15,6 +15,9 @@ addons/*
 # Don't ignore the editorconfig file in the addons directory.
 !addons/.editorconfig
 
+# Windows sometimes doesn't clean up TMP files
+*.tmp
+
 .vscode
 
 secret_stuff.md
