@@ -28,7 +28,7 @@ func _apply_spray_effects():
 	particles.emitting = true
 
 @rpc("any_peer", "call_local", "reliable")
-func get_sprayed():
+func get_sprayed(spraying_player: Player):
 	if tween:
 		tween.kill()
 	_apply_spray_effects()
