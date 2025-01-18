@@ -17,8 +17,11 @@ func _ready():
 	particles.emitting = false
 
 func _process(delta: float) -> void:
-	if stats.stinky:
+	if stats.stink_intensity > 0:
 		_apply_spray_effects() # sync spray effects
+	
+	if is_multiplayer_authority():
+		stats.stink_intensity = timer.time_left / timer.wait_time
 
 func _apply_spray_effects():
 	sprite.modulate.b = 0
@@ -26,7 +29,6 @@ func _apply_spray_effects():
 
 @rpc("any_peer", "call_local", "reliable")
 func get_sprayed():
-	stats.stinky = true
 	if tween:
 		tween.kill()
 	_apply_spray_effects()
@@ -38,5 +40,5 @@ func _on_timer_timeout():
 	tween = get_tree().create_tween()
 	tween.tween_property(sprite, "modulate:b", 1, 1)
 	particles.emitting = false
-	stats.stinky = false
+	stats.stink_intensity = 0
 	effects_resolved.emit()

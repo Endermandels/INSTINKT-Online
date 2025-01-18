@@ -11,6 +11,8 @@ const FRICTION = 0.9
 @onready var camera := $Camera2D
 @onready var rollback_synchronizer := $RollbackSynchronizer
 @onready var spray := $Spray
+@onready var stats := $Stats
+@onready var spray_hurtbox := $SprayHurtbox
 
 # Giving Client Authority
 @export var chat: Chat

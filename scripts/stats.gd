@@ -1,4 +1,4 @@
 extends Node
 class_name Stats
 
-var stinky = false
+var stink_intensity = 0

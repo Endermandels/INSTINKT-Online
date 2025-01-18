@@ -2,16 +2,18 @@ extends Control
 class_name SprayFX
 
 @export var spray_hurtbox: SprayHurtbox
+@export var player_detection: PlayerDetection
 
-@onready var color_rect := $ColorRect
+@onready var sprayed_color_rect := $SprayedColorRect
+@onready var stinky_color_rect := $StinkyColorRect
 
 var tween: Tween = null
 
 func _ready():
 	show()
-	color_rect.color.a = 0
+	sprayed_color_rect.color.a = 0
+	stinky_color_rect.color.a = 0
 	spray_hurtbox.connect("sprayed", _on_spray_hurtbox_sprayed)
-	spray_hurtbox.connect("effects_resolved", _on_spray_hurtbox_effects_resolved)
 
 func _on_spray_hurtbox_sprayed():
 	if not is_multiplayer_authority():
@@ -20,19 +22,26 @@ func _on_spray_hurtbox_sprayed():
 	if tween:
 		tween.kill()
 	
-	color_rect.color = Color.WHITE
+	sprayed_color_rect.color = Color.WHITE
 	
 	tween = get_tree().create_tween()
-	tween.tween_property(color_rect, "color", Color(0.89, 0.812, 0, 0.737), 5)
-	tween.connect("finished", _on_tween_finished)
+	tween.tween_property(sprayed_color_rect, "color", Color(0.89, 0.812, 0, 0.737), 5)
+	tween.chain().tween_property(sprayed_color_rect, "color:a", 0, spray_hurtbox.timer.wait_time/4)
 
-func _on_tween_finished():
-	tween = get_tree().create_tween()
-	tween.tween_property(color_rect, "color:a", 0.2, 20)
+func _handle_stinky_players():
+	stinky_color_rect.color.a = 0
+	for player in player_detection.players:
+		print('%s %s' % [player.name, player.stats.stink_intensity])
+		if player.stats.stink_intensity > 0:
+			# Show stinky color rect
+			var dist = get_parent().global_position.distance_to(player.global_position)
+			stinky_color_rect.color.a = max(
+				stinky_color_rect.color.a,
+				min(player.stats.stink_intensity, 1 - dist / player_detection.collision_shape.shape.radius)
+			)
 
-func _on_spray_hurtbox_effects_resolved():
+func _process(delta: float) -> void:
 	if not is_multiplayer_authority():
 		return
 	
-	tween = get_tree().create_tween()
-	tween.tween_property(color_rect, "color:a", 0, 0.5)
+	_handle_stinky_players()
