@@ -13,7 +13,6 @@ signal released # When the spray leaves the player
 
 func _ready():
 	area.monitoring = false
-	area.connect("area_entered", _on_area_entered)
 	sprite.hide()
 
 func _look_at_mouse():
@@ -47,6 +46,28 @@ func _on_tween_finished():
 	sprite.hide()
 	area.monitoring = false
 
-func _on_area_entered(area: Area2D):
-	if area.get_parent() != get_parent():
-		area.get_sprayed.rpc()
+func _search_for_hurtboxes():
+	# When monitoring, check for the closest spray hurtbox and spray it
+	if not area.monitoring:
+		return
+	
+	# only spray the closest target
+	var closest_hurtbox = null
+	var closest_dist = 99999999999
+	
+	for hurtbox: SprayHurtbox in area.get_overlapping_areas():
+		if hurtbox.get_parent() == get_parent():
+			continue
+		
+		# found target
+		var dist = get_parent().global_position.distance_to(hurtbox.get_parent().global_position)
+		if dist < closest_dist:
+			closest_hurtbox = hurtbox
+			closest_dist = dist
+	
+	if closest_hurtbox:
+		closest_hurtbox.get_sprayed.rpc()
+		area.monitoring = false # stop scanning after finding a target
+
+func _process(delta: float) -> void:
+	_search_for_hurtboxes()
