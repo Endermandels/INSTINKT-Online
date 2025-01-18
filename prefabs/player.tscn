@@ -159,6 +159,12 @@ replication_config = SubResource("SceneReplicationConfig_0euwh")
 [node name="Stats" type="Node" parent="."]
 script = ExtResource("7_j2tcp")
 
+[node name="ProximitySFX" type="Node2D" parent="."]
+
+[node name="Spray" type="AudioStreamPlayer2D" parent="ProximitySFX"]
+stream = ExtResource("14_xt5nf")
+max_distance = 300.0
+
 [node name="Input" type="Node2D" parent="." node_paths=PackedStringArray("chat")]
 script = ExtResource("2_o4wky")
 chat = NodePath("../HUD/Chat")
@@ -167,7 +173,7 @@ chat = NodePath("../HUD/Chat")
 position = Vector2(-4, 0)
 script = ExtResource("6_mf2j2")
 input = NodePath("../Input")
-spray_sound = NodePath("../SFX/Spray")
+spray_sound = NodePath("../ProximitySFX/Spray")
 
 [node name="Sprite2D" type="Sprite2D" parent="Spray"]
 scale = Vector2(4, 2)
@@ -298,8 +304,3 @@ text = ". . ."
 [node name="ChatDisplayTimer" type="Timer" parent="HUD/Chat"]
 wait_time = 7.0
 one_shot = true
-
-[node name="SFX" type="Node" parent="."]
-
-[node name="Spray" type="AudioStreamPlayer2D" parent="SFX"]
-stream = ExtResource("14_xt5nf")
