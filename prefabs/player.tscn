@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=26 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
@@ -13,6 +13,7 @@
 [ext_resource type="Script" path="res://scripts/player/hud/chat_box.gd" id="8_p4sqx"]
 [ext_resource type="Script" path="res://scripts/player/player_detection.gd" id="10_uv1ro"]
 [ext_resource type="Script" path="res://scripts/player/hud/spray_fx.gd" id="12_s6slq"]
+[ext_resource type="AudioStream" uid="uid://cythx6reb1slv" path="res://assets/sfx/spray.mp3" id="14_xt5nf"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_0euwh"]
 properties/0/path = NodePath(".:player_id")
@@ -238,7 +239,33 @@ offset_right = 40.0
 offset_bottom = 40.0
 theme = ExtResource("6_hscjn")
 
+[node name="SprayFX" type="Control" parent="HUD" node_paths=PackedStringArray("spray_hurtbox", "player_detection")]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("12_s6slq")
+spray_hurtbox = NodePath("../../SprayHurtbox")
+player_detection = NodePath("../../PlayerDetection")
+
+[node name="StinkyColorRect" type="ColorRect" parent="HUD/SprayFX"]
+layout_mode = 0
+offset_left = -160.0
+offset_top = -91.0
+offset_right = 161.0
+offset_bottom = 90.0
+color = Color(0.729412, 1, 0, 0.505882)
+
+[node name="SprayedColorRect" type="ColorRect" parent="HUD/SprayFX"]
+layout_mode = 0
+offset_left = -160.0
+offset_top = -91.0
+offset_right = 161.0
+offset_bottom = 90.0
+color = Color(0.890196, 0.811765, 0, 0.737255)
+
 [node name="Chat" type="Control" parent="HUD"]
+z_index = 11
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -271,27 +298,7 @@ text = ". . ."
 wait_time = 7.0
 one_shot = true
 
-[node name="SprayFX" type="Control" parent="HUD" node_paths=PackedStringArray("spray_hurtbox", "player_detection")]
-visible = false
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-script = ExtResource("12_s6slq")
-spray_hurtbox = NodePath("../../SprayHurtbox")
-player_detection = NodePath("../../PlayerDetection")
+[node name="SFX" type="Node" parent="."]
 
-[node name="StinkyColorRect" type="ColorRect" parent="HUD/SprayFX"]
-layout_mode = 0
-offset_left = -160.0
-offset_top = -91.0
-offset_right = 161.0
-offset_bottom = 90.0
-color = Color(0.729412, 1, 0, 0.505882)
-
-[node name="SprayedColorRect" type="ColorRect" parent="HUD/SprayFX"]
-layout_mode = 0
-offset_left = -160.0
-offset_top = -91.0
-offset_right = 161.0
-offset_bottom = 90.0
-color = Color(0.890196, 0.811765, 0, 0.737255)
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="SFX"]
+stream = ExtResource("14_xt5nf")

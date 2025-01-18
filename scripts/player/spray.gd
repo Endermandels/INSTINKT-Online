@@ -7,10 +7,11 @@ class_name Spray
 @export var input: MultiplayerInput
 @export var fade_duration: float = 0.5
 @export var splash_radius: int = 10
+@export var spray_sound: AudioStreamPlayer2D
 
 var tween: Tween
 
-signal released # When the spray leaves the player
+signal released # When the player sprays
 
 func _ready():
 	area.monitoring = false

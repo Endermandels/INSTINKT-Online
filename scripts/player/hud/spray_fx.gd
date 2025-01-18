@@ -31,7 +31,6 @@ func _on_spray_hurtbox_sprayed():
 func _handle_stinky_players():
 	stinky_color_rect.color.a = 0
 	for player in player_detection.players:
-		print('%s %s' % [player.name, player.stats.stink_intensity])
 		if player.stats.stink_intensity > 0:
 			# Show stinky color rect
 			var dist = get_parent().global_position.distance_to(player.global_position)
