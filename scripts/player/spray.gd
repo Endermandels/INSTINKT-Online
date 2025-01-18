@@ -16,6 +16,7 @@ signal released # When the player sprays
 func _ready():
 	area.monitoring = false
 	sprite.hide()
+	self.connect("released", _on_spray_released.rpc)
 
 func _look_at_mouse():
 	sprite.look_at(input.mouse_pos)
@@ -43,6 +44,10 @@ func show_spray():
 	sprite.show()
 	_tween_sprite()
 	released.emit()
+
+@rpc("any_peer", "call_local", "reliable")
+func _on_spray_released():
+	spray_sound.play()
 
 func _on_tween_finished():
 	sprite.hide()

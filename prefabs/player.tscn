@@ -163,10 +163,11 @@ script = ExtResource("7_j2tcp")
 script = ExtResource("2_o4wky")
 chat = NodePath("../HUD/Chat")
 
-[node name="Spray" type="Node2D" parent="." node_paths=PackedStringArray("input")]
+[node name="Spray" type="Node2D" parent="." node_paths=PackedStringArray("input", "spray_sound")]
 position = Vector2(-4, 0)
 script = ExtResource("6_mf2j2")
 input = NodePath("../Input")
+spray_sound = NodePath("../SFX/Spray")
 
 [node name="Sprite2D" type="Sprite2D" parent="Spray"]
 scale = Vector2(4, 2)
@@ -300,5 +301,5 @@ one_shot = true
 
 [node name="SFX" type="Node" parent="."]
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="SFX"]
+[node name="Spray" type="AudioStreamPlayer2D" parent="SFX"]
 stream = ExtResource("14_xt5nf")
