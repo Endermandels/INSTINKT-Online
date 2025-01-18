@@ -14,12 +14,14 @@ const FRICTION = 0.9
 
 # Giving Client Authority
 @export var chat: Chat
+@export var spray_fx: SprayFX
 @export var input: MultiplayerInput
 @export var player_id := 1:
 	set(id):
 		player_id = id
 		input.set_multiplayer_authority(id) # Give client authority over inputs
 		chat.set_multiplayer_authority(id) # Give client authority over chat
+		spray_fx.set_multiplayer_authority(id) # etc.
 
 func _ready() -> void:
 	if multiplayer.get_unique_id() == player_id:

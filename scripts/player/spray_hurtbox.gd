@@ -10,6 +10,7 @@ class_name SprayHurtbox
 var tween: Tween
 
 signal sprayed
+signal effects_resolved # When the spray dissapates
 
 func _ready():
 	timer.connect("timeout", _on_timer_timeout.rpc)
@@ -22,9 +23,6 @@ func _process(delta: float) -> void:
 func _apply_spray_effects():
 	sprite.modulate.b = 0
 	particles.emitting = true
-
-func _apply_hud_effects():
-	pass
 
 @rpc("any_peer", "call_local", "reliable")
 func get_sprayed():
@@ -41,3 +39,4 @@ func _on_timer_timeout():
 	tween.tween_property(sprite, "modulate:b", 1, 1)
 	particles.emitting = false
 	stats.stinky = false
+	effects_resolved.emit()

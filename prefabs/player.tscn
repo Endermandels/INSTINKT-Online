@@ -129,10 +129,11 @@ _data = {
 "spray": SubResource("Animation_jphks")
 }
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "input")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "spray_fx", "input")]
 collision_mask = 0
 script = ExtResource("1_568lg")
 chat = NodePath("HUD/Chat")
+spray_fx = NodePath("HUD/SprayFX")
 input = NodePath("Input")
 
 [node name="RollbackSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root")]
@@ -258,8 +259,18 @@ text = ". . ."
 wait_time = 7.0
 one_shot = true
 
-[node name="SprayFX" type="Control" parent="HUD"]
+[node name="SprayFX" type="Control" parent="HUD" node_paths=PackedStringArray("spray_hurtbox")]
+visible = false
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("12_s6slq")
+spray_hurtbox = NodePath("../../SprayHurtbox")
+
+[node name="ColorRect" type="ColorRect" parent="HUD/SprayFX"]
+layout_mode = 0
+offset_left = -160.0
+offset_top = -91.0
+offset_right = 161.0
+offset_bottom = 90.0
+color = Color(0.890196, 0.811765, 0, 0.737255)
