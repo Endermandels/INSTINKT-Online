@@ -13,6 +13,8 @@ const FRICTION = 0.9
 @onready var spray := $Spray
 @onready var stats := $Stats
 @onready var spray_hurtbox := $SprayHurtbox
+@onready var step_sound := $ProximitySFX/Step
+@onready var step_cooldown_timer := $Timers/StepCooldown
 
 # Giving Client Authority
 @export var chat: Chat
@@ -29,6 +31,7 @@ func _ready() -> void:
 	if multiplayer.get_unique_id() == player_id:
 		# Only this player should have an active camera
 		camera.make_current()
+		step_cooldown_timer.connect("timeout", _on_step_cooldown_timer_timeout.rpc)
 	else:
 		# All other players should not be active in the same client
 		camera.enabled = false
@@ -71,12 +74,20 @@ func _apply_movement(delta: float):
 	
 	if dir != Vector2.ZERO:
 		velocity = velocity.lerp(dir*SPEED, ACCEL)
+		if step_cooldown_timer.is_stopped():
+			step_cooldown_timer.start()
 	else:
+		step_cooldown_timer.stop()
 		velocity = velocity.lerp(dir*SPEED, FRICTION)
 	
 	velocity *= NetworkTime.physics_factor # Correct velocity based on synced network tick loop
 	move_and_slide()
 	velocity /= NetworkTime.physics_factor # Revert velocity back to original (smooth movement)
+
+@rpc("any_peer", "call_local", "unreliable")
+func _on_step_cooldown_timer_timeout():
+	step_sound.pitch_scale = randf_range(1,1.2)
+	step_sound.play()
 
 func _process(delta: float) -> void:
 	if not multiplayer.is_server() or MultiplayerManager.host_mode_enabled:

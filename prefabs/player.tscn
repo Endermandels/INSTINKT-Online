@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=27 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://scripts/player/spray_hurtbox.gd" id="4_wpyme"]
 [ext_resource type="Theme" uid="uid://cne60462k31hi" path="res://assets/HUD_theme.tres" id="6_hscjn"]
 [ext_resource type="Script" path="res://scripts/player/spray.gd" id="6_mf2j2"]
+[ext_resource type="AudioStream" uid="uid://d0ts2de033myn" path="res://assets/sfx/small step.mp3" id="6_wa082"]
 [ext_resource type="Script" path="res://scripts/stats.gd" id="7_j2tcp"]
 [ext_resource type="Texture2D" uid="uid://dyd6pcjwgfxil" path="res://assets/art/Spray Sprite Sheet.png" id="8_81rfy"]
 [ext_resource type="Script" path="res://scripts/player/hud/chat_box.gd" id="8_p4sqx"]
@@ -156,6 +157,12 @@ properties = Array[String]([":global_transform"])
 [node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_0euwh")
 
+[node name="Timers" type="Node" parent="."]
+
+[node name="StepCooldown" type="Timer" parent="Timers"]
+wait_time = 0.333
+one_shot = true
+
 [node name="Stats" type="Node" parent="."]
 script = ExtResource("7_j2tcp")
 
@@ -164,6 +171,11 @@ script = ExtResource("7_j2tcp")
 [node name="Spray" type="AudioStreamPlayer2D" parent="ProximitySFX"]
 stream = ExtResource("14_xt5nf")
 max_distance = 300.0
+
+[node name="Step" type="AudioStreamPlayer2D" parent="ProximitySFX"]
+stream = ExtResource("6_wa082")
+volume_db = -10.0
+max_distance = 200.0
 
 [node name="Input" type="Node2D" parent="." node_paths=PackedStringArray("chat")]
 script = ExtResource("2_o4wky")
