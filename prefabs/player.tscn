@@ -161,7 +161,6 @@ chat = NodePath("../HUD/Chat")
 position = Vector2(-4, 0)
 script = ExtResource("6_mf2j2")
 input = NodePath("../Input")
-spray_fade_duration = 0.3
 
 [node name="Sprite2D" type="Sprite2D" parent="Spray"]
 scale = Vector2(4, 2)

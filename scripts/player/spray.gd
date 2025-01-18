@@ -5,7 +5,8 @@ class_name Spray
 @onready var area := $Sprite2D/Area2D
 
 @export var input: MultiplayerInput
-@export var spray_fade_duration: float = 0.5
+@export var fade_duration: float = 0.5
+@export var splash_radius: int = 10
 
 var tween: Tween
 
@@ -32,7 +33,7 @@ func _tween_sprite():
 		tween.kill()
 	
 	tween = get_tree().create_tween()
-	tween.tween_property(sprite, "modulate:a", 0, spray_fade_duration)
+	tween.tween_property(sprite, "modulate:a", 0, fade_duration)
 	tween.connect("finished", _on_tween_finished)
 
 func show_spray():
@@ -47,13 +48,13 @@ func _on_tween_finished():
 	area.monitoring = false
 
 func _search_for_hurtboxes():
-	# When monitoring, check for the closest spray hurtbox and spray it
+	# when monitoring, check for the closest spray hurtboxes and spray them
 	if not area.monitoring:
 		return
 	
 	# only spray the closest target
-	var closest_hurtbox = null
-	var closest_dist = 99999999999
+	var closest_hurtboxes = [] # list of tuples containing hurtbox and distance
+	var closest_dist = 9999999999
 	
 	for hurtbox: SprayHurtbox in area.get_overlapping_areas():
 		if hurtbox.get_parent() == get_parent():
@@ -61,12 +62,18 @@ func _search_for_hurtboxes():
 		
 		# found target
 		var dist = get_parent().global_position.distance_to(hurtbox.get_parent().global_position)
-		if dist < closest_dist:
-			closest_hurtbox = hurtbox
+		if dist < closest_dist - splash_radius:
+			# much closer
+			closest_hurtboxes.clear()
+			closest_hurtboxes.append(hurtbox)
 			closest_dist = dist
+		elif dist < closest_dist + splash_radius:
+			# close enough to be sprayed
+			closest_hurtboxes.append(hurtbox)
 	
-	if closest_hurtbox:
-		closest_hurtbox.get_sprayed.rpc()
+	if len(closest_hurtboxes) > 0:
+		for hurtbox in closest_hurtboxes:
+			hurtbox.get_sprayed.rpc()
 		area.monitoring = false # stop scanning after finding a target
 
 func _process(delta: float) -> void:
