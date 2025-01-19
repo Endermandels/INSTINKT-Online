@@ -174,10 +174,6 @@ replication_config = SubResource("SceneReplicationConfig_0euwh")
 wait_time = 0.333
 one_shot = true
 
-[node name="RunAway" type="Timer" parent="Timers"]
-wait_time = 0.5
-one_shot = true
-
 [node name="Stats" type="Node" parent="."]
 script = ExtResource("7_j2tcp")
 

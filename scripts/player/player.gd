@@ -5,7 +5,6 @@ const MAX_SPEED = 100.0
 const ACCEL = 0.7
 const FRICTION = 0.9
 
-var run_away_from: Player = null
 var username: String = ""
 
 @onready var anim_player := $AnimationPlayer
@@ -18,10 +17,10 @@ var username: String = ""
 @onready var player_detection := $PlayerDetection
 @onready var step_sound := $ProximitySFX/Step
 @onready var step_cooldown_timer := $Timers/StepCooldown
-@onready var run_away_timer := $Timers/RunAway
 @onready var username_label := $HUD/Username/Label
 
 @export var social_distancing = 100
+@export var stink_push_intensity = 0.7
 
 # Giving Client Authority
 @export var chat: Chat
@@ -39,7 +38,6 @@ func _ready() -> void:
 		# Only this player should have an active camera
 		camera.make_current()
 		step_cooldown_timer.connect("timeout", _on_step_cooldown_timer_timeout.rpc)
-		run_away_timer.connect("timeout", _on_run_away_timer_timeout.rpc)
 	else:
 		# All other players should not be active in the same client
 		camera.enabled = false
@@ -67,7 +65,7 @@ func _apply_animations(delta: float):
 		sprite.flip_h = false
 		spray.position.x = -4
 	
-	if velocity.length() > 99:
+	if velocity.length() > 30:
 		anim_player.play("run")
 	elif velocity.length() < 20:
 		anim_player.play("idle")
@@ -89,11 +87,7 @@ func _apply_movement(delta: float):
 		if player.stats.stink_intensity < 0.5:
 			continue 
 		if global_position.distance_to(player.global_position) < social_distancing:
-			run_away_from = player
-			run_away_timer.start()
-	
-	if run_away_from and not run_away_timer.is_stopped():
-		dir = -global_position.direction_to(run_away_from.global_position)
+			dir -= global_position.direction_to(player.global_position) * stink_push_intensity
 	
 	# Do not move while playing the spray animation
 	if anim_player.current_animation == "spray":
@@ -115,10 +109,6 @@ func _apply_movement(delta: float):
 func _on_step_cooldown_timer_timeout():
 	step_sound.pitch_scale = randf_range(1,1.2)
 	step_sound.play()
-
-@rpc("any_peer", "call_local", "reliable")
-func _on_run_away_timer_timeout():
-	run_away_from = null
 
 func _process(delta: float) -> void:
 	if not multiplayer.is_server() or MultiplayerManager.host_mode_enabled:
