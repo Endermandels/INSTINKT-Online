@@ -6,6 +6,7 @@ const ACCEL = 0.7
 const FRICTION = 0.9
 
 var run_away_from: Player = null
+var username: String = ""
 
 @onready var anim_player := $AnimationPlayer
 @onready var sprite := $Sprite2D
@@ -18,6 +19,7 @@ var run_away_from: Player = null
 @onready var step_sound := $ProximitySFX/Step
 @onready var step_cooldown_timer := $Timers/StepCooldown
 @onready var run_away_timer := $Timers/RunAway
+@onready var username_label := $HUD/Username/Label
 
 @export var social_distancing = 100
 
@@ -43,6 +45,13 @@ func _ready() -> void:
 		camera.enabled = false
 	
 	rollback_synchronizer.process_settings() # Call after establishing authority
+
+func update_username(updated_username: String):
+	if not updated_username:
+		username_label.hide()
+		return
+	username = updated_username
+	username_label.text = updated_username
 
 func _apply_animations(delta: float):
 	# Do nothing while spraying

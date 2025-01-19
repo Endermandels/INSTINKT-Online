@@ -11,13 +11,26 @@ func _ready() -> void:
 		print("Starting dedicated server...")
 		MultiplayerManager.become_host()
 
-func join_host(server_ip: String = "localhost"):
+func join_host(server_ip: String = "localhost", username: String = ""):
 	print("Joining Host...")
 	var client_peer = ENetMultiplayerPeer.new()
 	client_peer.create_client(server_ip, SERVER_PORT)
 	multiplayer.multiplayer_peer = client_peer # establishes that this instance is a client
+	
+	# Wait until connected to send the username
+	multiplayer.connected_to_server.connect(_on_connected_to_server.bind(username))
 
-func become_host():
+func _on_connected_to_server(username: String):
+	_update_player_username.rpc_id(1, multiplayer.get_unique_id(), username)
+
+@rpc("any_peer", "call_local", "reliable")
+func _update_player_username(id: int, username: String):
+	if not _players_spawn_node.has_node(str(id)):
+		push_error("Player not instantiated")
+		return
+	_players_spawn_node.get_node(str(id)).update_username(username)
+
+func become_host(username: String = ""):
 	print("Becoming Host...")
 	
 	host_mode_enabled = true
@@ -33,6 +46,7 @@ func become_host():
 	
 	if not OS.has_feature("dedicated_server"):
 		_add_player()
+		_update_player_username(1, username)
 
 func _add_player(id=1):
 	print("Player %s joined the game!" % id)
