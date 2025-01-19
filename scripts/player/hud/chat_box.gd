@@ -15,8 +15,9 @@ func _ready():
 	chat_box.hide()
 	chat_display_label.modulate.a = 0
 	chat_box.connect("text_submitted", _on_chat_box_text_submitted)
-	chat_box.connect("text_changed", _on_chat_box_text_changed)
+	chat_box.connect("text_changed", _on_chat_box_text_changed.rpc)
 	chat_display_timer.connect("timeout", _on_chat_display_timer_timeout)
+	self.connect("chat_closed", _on_chat_closed.rpc)
 
 func _handle_toggle():
 	if Input.is_action_just_pressed("chat", true):
@@ -37,11 +38,8 @@ func _on_chat_box_text_submitted(submitted_string: String):
 	send_message.rpc_id(1, submitted_string.strip_edges())
 	chat_box.clear()
 
-func _on_chat_box_text_changed(new_text: String):
-	show_typing_label.rpc()
-
 @rpc("any_peer", "call_local", "reliable")
-func show_typing_label():
+func _on_chat_box_text_changed(new_text: String):
 	if chat_display_label.modulate.a > 0 and chat_display_label.text != ". . .":
 		return
 	if tween:
@@ -50,6 +48,11 @@ func show_typing_label():
 	chat_display_label.text = ". . ."
 	chat_display_label.modulate.a = 1
 	chat_display_timer.start()
+
+@rpc("any_peer", "call_local", "reliable")
+func _on_chat_closed():
+	if chat_display_label.text == ". . .":
+		chat_display_label.modulate.a = 0
 
 @rpc("any_peer", "call_local", "reliable")
 func send_message(message: String):

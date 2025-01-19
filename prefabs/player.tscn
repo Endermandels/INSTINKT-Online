@@ -1,17 +1,50 @@
-[gd_scene load_steps=13 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=29 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
 [ext_resource type="Script" path="res://addons/netfox/rollback/rollback-synchronizer.gd" id="2_5nw8e"]
 [ext_resource type="Script" path="res://scripts/multiplayer/multiplayer_input.gd" id="2_o4wky"]
 [ext_resource type="Script" path="res://addons/netfox/tick-interpolator.gd" id="3_w3vht"]
+[ext_resource type="Script" path="res://scripts/player/spray_hurtbox.gd" id="4_wpyme"]
 [ext_resource type="Theme" uid="uid://cne60462k31hi" path="res://assets/HUD_theme.tres" id="6_hscjn"]
+[ext_resource type="Script" path="res://scripts/player/spray.gd" id="6_mf2j2"]
+[ext_resource type="AudioStream" uid="uid://d0ts2de033myn" path="res://assets/sfx/small step.mp3" id="6_wa082"]
+[ext_resource type="Script" path="res://scripts/stats.gd" id="7_j2tcp"]
+[ext_resource type="Texture2D" uid="uid://dyd6pcjwgfxil" path="res://assets/art/Spray Sprite Sheet.png" id="8_81rfy"]
 [ext_resource type="Script" path="res://scripts/player/hud/chat_box.gd" id="8_p4sqx"]
+[ext_resource type="Shader" path="res://shaders/blur.gdshader" id="10_uaoty"]
+[ext_resource type="Script" path="res://scripts/player/player_detection.gd" id="10_uv1ro"]
+[ext_resource type="Script" path="res://scripts/player/hud/spray_fx.gd" id="12_s6slq"]
+[ext_resource type="AudioStream" uid="uid://cythx6reb1slv" path="res://assets/sfx/spray.mp3" id="14_xt5nf"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_0euwh"]
 properties/0/path = NodePath(".:player_id")
 properties/0/spawn = true
 properties/0/replication_mode = 0
+properties/1/path = NodePath("Stats:stink_intensity")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_eah1l"]
+radius = 7.0
+height = 128.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sks23"]
+radius = 8.0
+height = 26.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hxqn1"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(10, 1, 1)
+gravity = Vector3(0, 98, 0)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ok2ra"]
+radius = 170.658
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6gd3c"]
+radius = 4.0
+height = 14.0
 
 [sub_resource type="Animation" id="Animation_srcra"]
 length = 0.001
@@ -64,24 +97,63 @@ tracks/0/keys = {
 "values": [8, 9, 10, 11, 12, 13, 14, 15]
 }
 
+[sub_resource type="Animation" id="Animation_jphks"]
+resource_name = "spray"
+length = 0.666675
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0833333, 0.166667, 0.416667, 0.583333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [16, 17, 18, 19, 20]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Spray")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.416667),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"show_spray"
+}]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ngutj"]
 _data = {
 "RESET": SubResource("Animation_srcra"),
 "idle": SubResource("Animation_s1pcw"),
-"run": SubResource("Animation_ranpq")
+"run": SubResource("Animation_ranpq"),
+"spray": SubResource("Animation_jphks")
 }
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "input")]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_33sqs"]
+shader = ExtResource("10_uaoty")
+shader_parameter/lod = 0.0
+
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "spray_fx", "input")]
+collision_mask = 0
 script = ExtResource("1_568lg")
+social_distancing = 80
 chat = NodePath("HUD/Chat")
+spray_fx = NodePath("HUD/SprayFX")
 input = NodePath("Input")
 
 [node name="RollbackSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root")]
 script = ExtResource("2_5nw8e")
 root = NodePath("..")
 enable_prediction = true
-state_properties = Array[String]([":global_transform", ":velocity"])
-input_properties = Array[String](["Input:h_dir", "Input:v_dir"])
+state_properties = Array[String]([":global_transform", ":velocity", "Spray:rotation"])
+input_properties = Array[String](["Input:h_dir", "Input:v_dir", "Input:use_special", "Input:mouse_pos"])
 
 [node name="TickInterpolator" type="Node" parent="." node_paths=PackedStringArray("root")]
 script = ExtResource("3_w3vht")
@@ -91,14 +163,93 @@ properties = Array[String]([":global_transform"])
 [node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_0euwh")
 
-[node name="Input" type="Node" parent="." node_paths=PackedStringArray("chat")]
+[node name="Timers" type="Node" parent="."]
+
+[node name="StepCooldown" type="Timer" parent="Timers"]
+wait_time = 0.333
+one_shot = true
+
+[node name="RunAway" type="Timer" parent="Timers"]
+wait_time = 0.5
+one_shot = true
+
+[node name="Stats" type="Node" parent="."]
+script = ExtResource("7_j2tcp")
+
+[node name="ProximitySFX" type="Node2D" parent="."]
+
+[node name="Spray" type="AudioStreamPlayer2D" parent="ProximitySFX"]
+stream = ExtResource("14_xt5nf")
+max_distance = 300.0
+
+[node name="Step" type="AudioStreamPlayer2D" parent="ProximitySFX"]
+stream = ExtResource("6_wa082")
+volume_db = -10.0
+max_distance = 200.0
+
+[node name="Input" type="Node2D" parent="." node_paths=PackedStringArray("chat")]
 script = ExtResource("2_o4wky")
 chat = NodePath("../HUD/Chat")
+
+[node name="Spray" type="Node2D" parent="." node_paths=PackedStringArray("input", "spray_sound")]
+position = Vector2(-4, 0)
+script = ExtResource("6_mf2j2")
+input = NodePath("../Input")
+spray_sound = NodePath("../ProximitySFX/Spray")
+
+[node name="Sprite2D" type="Sprite2D" parent="Spray"]
+scale = Vector2(4, 2)
+texture = ExtResource("8_81rfy")
+offset = Vector2(16, -0.5)
+vframes = 5
+
+[node name="Area2D" type="Area2D" parent="Spray/Sprite2D"]
+position = Vector2(16, 9.53675e-07)
+scale = Vector2(0.25, 0.5)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spray/Sprite2D/Area2D"]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_eah1l")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_0hdi7")
 hframes = 8
 vframes = 5
+
+[node name="SprayHurtbox" type="Area2D" parent="." node_paths=PackedStringArray("stats", "sprite")]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("4_wpyme")
+stats = NodePath("../Stats")
+sprite = NodePath("../Sprite2D")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SprayHurtbox"]
+position = Vector2(0, -2)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_sks23")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="SprayHurtbox"]
+modulate = Color(0.905882, 1, 0, 1)
+position = Vector2(0, -6)
+process_material = SubResource("ParticleProcessMaterial_hxqn1")
+lifetime = 0.5
+
+[node name="SprayTimer" type="Timer" parent="SprayHurtbox"]
+wait_time = 120.0
+one_shot = true
+
+[node name="PlayerDetection" type="Area2D" parent="."]
+collision_layer = 0
+script = ExtResource("10_uv1ro")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetection"]
+shape = SubResource("CircleShape2D_ok2ra")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_6gd3c")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../Sprite2D")
@@ -110,13 +261,50 @@ autoplay = "idle"
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="HUD" type="Control" parent="."]
+z_index = 10
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 theme = ExtResource("6_hscjn")
 
+[node name="SprayFX" type="Control" parent="HUD" node_paths=PackedStringArray("spray_hurtbox", "player_detection", "stats")]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("12_s6slq")
+spray_hurtbox = NodePath("../../SprayHurtbox")
+player_detection = NodePath("../../PlayerDetection")
+stats = NodePath("../../Stats")
+
+[node name="BlurColorRect" type="ColorRect" parent="HUD/SprayFX"]
+z_index = 9
+material = SubResource("ShaderMaterial_33sqs")
+layout_mode = 0
+offset_left = -160.0
+offset_top = -91.0
+offset_right = 161.0
+offset_bottom = 90.0
+
+[node name="StinkyColorRect" type="ColorRect" parent="HUD/SprayFX"]
+layout_mode = 0
+offset_left = -160.0
+offset_top = -91.0
+offset_right = 161.0
+offset_bottom = 90.0
+color = Color(0.729412, 1, 0, 0.505882)
+
+[node name="SprayedColorRect" type="ColorRect" parent="HUD/SprayFX"]
+layout_mode = 0
+offset_left = -160.0
+offset_top = -91.0
+offset_right = 161.0
+offset_bottom = 90.0
+color = Color(0.890196, 0.811765, 0, 0.737255)
+
 [node name="Chat" type="Control" parent="HUD"]
+z_index = 11
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
