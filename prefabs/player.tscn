@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=30 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
@@ -24,6 +24,9 @@ properties/0/replication_mode = 0
 properties/1/path = NodePath("Stats:stink_intensity")
 properties/1/spawn = true
 properties/1/replication_mode = 1
+properties/2/path = NodePath("HUD/Username/Label:text")
+properties/2/spawn = true
+properties/2/replication_mode = 1
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_eah1l"]
 radius = 7.0
@@ -140,6 +143,8 @@ _data = {
 shader = ExtResource("10_uaoty")
 shader_parameter/lod = 0.0
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6ly25"]
+
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "spray_fx", "input")]
 collision_mask = 0
 script = ExtResource("1_568lg")
@@ -167,10 +172,6 @@ replication_config = SubResource("SceneReplicationConfig_0euwh")
 
 [node name="StepCooldown" type="Timer" parent="Timers"]
 wait_time = 0.333
-one_shot = true
-
-[node name="RunAway" type="Timer" parent="Timers"]
-wait_time = 0.5
 one_shot = true
 
 [node name="Stats" type="Node" parent="."]
@@ -323,9 +324,9 @@ expand_to_text_length = true
 
 [node name="ChatDisplayContainer" type="CenterContainer" parent="HUD/Chat"]
 layout_mode = 0
-offset_top = -21.0
+offset_top = -28.0
 offset_right = 40.0
-offset_bottom = 19.0
+offset_bottom = 12.0
 use_top_left = true
 
 [node name="Label" type="Label" parent="HUD/Chat/ChatDisplayContainer"]
@@ -336,3 +337,15 @@ text = ". . ."
 [node name="ChatDisplayTimer" type="Timer" parent="HUD/Chat"]
 wait_time = 7.0
 one_shot = true
+
+[node name="Username" type="CenterContainer" parent="HUD"]
+layout_mode = 0
+offset_top = -18.0
+offset_right = 40.0
+offset_bottom = 22.0
+use_top_left = true
+
+[node name="Label" type="Label" parent="HUD/Username"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("StyleBoxEmpty_6ly25")
