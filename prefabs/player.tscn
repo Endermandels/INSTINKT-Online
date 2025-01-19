@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=29 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" path="res://scripts/stats.gd" id="7_j2tcp"]
 [ext_resource type="Texture2D" uid="uid://dyd6pcjwgfxil" path="res://assets/art/Spray Sprite Sheet.png" id="8_81rfy"]
 [ext_resource type="Script" path="res://scripts/player/hud/chat_box.gd" id="8_p4sqx"]
+[ext_resource type="Shader" path="res://shaders/blur.gdshader" id="10_uaoty"]
 [ext_resource type="Script" path="res://scripts/player/player_detection.gd" id="10_uv1ro"]
 [ext_resource type="Script" path="res://scripts/player/hud/spray_fx.gd" id="12_s6slq"]
 [ext_resource type="AudioStream" uid="uid://cythx6reb1slv" path="res://assets/sfx/spray.mp3" id="14_xt5nf"]
@@ -135,9 +136,14 @@ _data = {
 "spray": SubResource("Animation_jphks")
 }
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_33sqs"]
+shader = ExtResource("10_uaoty")
+shader_parameter/lod = 0.0
+
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "spray_fx", "input")]
 collision_mask = 0
 script = ExtResource("1_568lg")
+social_distancing = 80
 chat = NodePath("HUD/Chat")
 spray_fx = NodePath("HUD/SprayFX")
 input = NodePath("Input")
@@ -262,7 +268,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 theme = ExtResource("6_hscjn")
 
-[node name="SprayFX" type="Control" parent="HUD" node_paths=PackedStringArray("spray_hurtbox", "player_detection")]
+[node name="SprayFX" type="Control" parent="HUD" node_paths=PackedStringArray("spray_hurtbox", "player_detection", "stats")]
 visible = false
 anchors_preset = 0
 offset_right = 40.0
@@ -270,6 +276,16 @@ offset_bottom = 40.0
 script = ExtResource("12_s6slq")
 spray_hurtbox = NodePath("../../SprayHurtbox")
 player_detection = NodePath("../../PlayerDetection")
+stats = NodePath("../../Stats")
+
+[node name="BlurColorRect" type="ColorRect" parent="HUD/SprayFX"]
+z_index = 9
+material = SubResource("ShaderMaterial_33sqs")
+layout_mode = 0
+offset_left = -160.0
+offset_top = -91.0
+offset_right = 161.0
+offset_bottom = 90.0
 
 [node name="StinkyColorRect" type="ColorRect" parent="HUD/SprayFX"]
 layout_mode = 0
