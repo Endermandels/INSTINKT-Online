@@ -218,6 +218,11 @@ collision_mask = 2
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_eah1l")
 
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_0hdi7")
+hframes = 8
+vframes = 5
+
 [node name="SprayHurtbox" type="Area2D" parent="." node_paths=PackedStringArray("stats", "sprite")]
 collision_layer = 2
 collision_mask = 0
@@ -250,11 +255,6 @@ shape = SubResource("CircleShape2D_ok2ra")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_6gd3c")
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_0hdi7")
-hframes = 8
-vframes = 5
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../Sprite2D")
