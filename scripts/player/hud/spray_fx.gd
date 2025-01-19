@@ -11,6 +11,7 @@ class_name SprayFX
 
 var tween: Tween = null
 
+# blur strength
 var sprayed_lod: float  = 0
 var stink_lod: float = 0
 
@@ -51,7 +52,7 @@ func _handle_stinky_players():
 				stinky_color_rect.color.a,
 				intensity
 			)
-			stink_lod = max(stink_lod, intensity)
+			stink_lod = max(stink_lod, intensity*2)
 
 func _process(delta: float) -> void:
 	if not is_multiplayer_authority():
