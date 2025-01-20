@@ -36,7 +36,7 @@ func become_host(username: String = ""):
 	host_mode_enabled = true
 	
 	# Only need this on server because that's where players are added to the game
-	_players_spawn_node = get_tree().get_current_scene().get_node("Players")
+	_players_spawn_node = get_tree().get_current_scene().get_node("Y-Sorted/Players")
 	
 	var server_peer = ENetMultiplayerPeer.new()
 	server_peer.create_server(SERVER_PORT)

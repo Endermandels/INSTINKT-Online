@@ -146,6 +146,7 @@ shader_parameter/lod = 0.0
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6ly25"]
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "spray_fx", "input")]
+y_sort_enabled = true
 collision_mask = 4
 script = ExtResource("1_568lg")
 social_distancing = 80
