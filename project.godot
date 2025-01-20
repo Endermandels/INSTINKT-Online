@@ -91,6 +91,7 @@ special={
 
 2d_physics/layer_1="Player"
 2d_physics/layer_2="SprayHitbox"
+2d_physics/layer_3="Obstacle"
 
 [rendering]
 

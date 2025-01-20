@@ -11,6 +11,7 @@ class_name Lobby
 
 func _ready():
 	tile_map.hide()
+	multiplayer_hud.show()
 	host.connect("pressed", _on_host_pressed)
 	join.connect("pressed", _on_join_pressed)
 
