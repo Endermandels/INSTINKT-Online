@@ -6,6 +6,7 @@ class_name Lobby
 @onready var ip_address_text := $MultiplayerHUD/Panel/IPAddress
 @onready var multiplayer_hud := $MultiplayerHUD
 @onready var floor_tile_map := $Floor
+@onready var floor2_tile_map := $Floor2
 @onready var decoration_tile_map := $Decoration
 @onready var shadows_tile_map := $"Y-Sorted/Shadows"
 @onready var small_objects_tile_map := $"Y-Sorted/SmallObjects"
@@ -16,6 +17,7 @@ class_name Lobby
 
 func _set_tile_map_layer_visibility(visibility: bool):
 	floor_tile_map.visible = visibility
+	floor2_tile_map.visible = visibility
 	decoration_tile_map.visible = visibility
 	shadows_tile_map.visible = visibility
 	small_objects_tile_map.visible = visibility
