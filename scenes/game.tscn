@@ -1717,6 +1717,7 @@ y_sort_enabled = true
 
 [node name="Players" type="Node2D" parent="Y-Sorted"]
 y_sort_enabled = true
+position = Vector2(-9239, -2328)
 
 [node name="Decoration" type="TileMapLayer" parent="Y-Sorted"]
 y_sort_enabled = true
