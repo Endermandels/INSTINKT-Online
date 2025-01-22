@@ -10,6 +10,7 @@ var tween: Tween = null
 signal chat_opened
 signal chat_closed
 signal sent_message(message: String)
+signal command_submitted(command: String)
 
 func _ready():
 	chat_box.hide()
@@ -32,6 +33,10 @@ func _handle_toggle():
 
 func _on_chat_box_text_submitted(submitted_string: String):
 	if submitted_string.strip_edges() == "":
+		return
+	
+	if submitted_string.begins_with("`"):
+		command_submitted.emit(submitted_string.right(submitted_string.length()-1))
 		return
 	
 	# Send message to server
