@@ -7,8 +7,8 @@ class_name Lobby
 @onready var multiplayer_hud := $MultiplayerHUD
 @onready var floor_tile_map := $Floor
 @onready var floor2_tile_map := $Floor2
-@onready var decoration_tile_map := $Decoration
-@onready var shadows_tile_map := $"Y-Sorted/Shadows"
+@onready var shadows_tile_map := $"Shadows"
+@onready var decoration_tile_map := $"Y-Sorted/Decoration"
 @onready var small_objects_tile_map := $"Y-Sorted/SmallObjects"
 @onready var tree_layer_1_tile_map := $"Y-Sorted/TreeLayer1"
 @onready var tree_layer_2_tile_map := $"Y-Sorted/TreeLayer2"
