@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=36 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
@@ -144,6 +144,27 @@ _data = {
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_33sqs"]
 shader = ExtResource("10_uaoty")
 shader_parameter/lod = 0.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8phx5"]
+emission_shape = 1
+emission_sphere_radius = 65.87
+direction = Vector3(0, 0, -1)
+spread = 74.741
+initial_velocity_min = 935.47
+initial_velocity_max = 935.47
+gravity = Vector3(0, 100, 0)
+radial_accel_min = 100.0
+radial_accel_max = 100.0
+damping_min = 100.0
+damping_max = 100.0
+scale_min = 17.13
+scale_max = 44.01
+color = Color(0.968627, 1, 0.141176, 0.858824)
+hue_variation_min = -0.13
+hue_variation_max = 0.12
+turbulence_noise_scale = 3.211
+turbulence_initial_displacement_min = 1.49012e-06
+turbulence_initial_displacement_max = 1.49012e-06
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6ly25"]
 
@@ -320,6 +341,16 @@ offset_top = -181.0
 offset_right = 320.0
 offset_bottom = 180.0
 color = Color(0.890196, 0.811765, 0, 0.737255)
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="HUD/SprayFX"]
+position = Vector2(-1, 0)
+emitting = false
+amount = 100
+process_material = SubResource("ParticleProcessMaterial_8phx5")
+lifetime = 2.0
+one_shot = true
+explosiveness = 1.0
+local_coords = true
 
 [node name="Chat" type="Control" parent="HUD"]
 z_index = 11
