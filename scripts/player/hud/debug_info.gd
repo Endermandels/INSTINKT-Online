@@ -20,6 +20,6 @@ func _process(delta: float) -> void:
 	if not is_multiplayer_authority():
 		return
 	
-	position_label.text = 'position: ' + str(player.global_position)
+	position_label.text = 'position: ' + str(Vector2(player.global_position / 1000).snappedf(0.01))
 	stink_intensity_label.text = 'stink: ' + str(snapped(stats.stink_intensity, 0.01))
 	pid.text = 'pid: ' + player.name
