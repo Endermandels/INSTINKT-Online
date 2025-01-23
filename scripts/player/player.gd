@@ -42,6 +42,7 @@ func _ready() -> void:
 		camera.make_current()
 		step_cooldown_timer.connect("timeout", _on_step_cooldown_timer_timeout.rpc)
 		hud_commands.connect("zoom_camera", _on_hud_commands_zoom_camera)
+		hud_commands.connect("set_speed", _on_hud_commands_set_speed)
 	else:
 		# All other players should not be active in the same client
 		camera.enabled = false
@@ -122,6 +123,9 @@ func _on_hud_commands_zoom_camera(amount: float):
 		return
 	camera.zoom = Vector2(amount, amount)
 	hud.scale = Vector2(1/amount, 1/amount)
+
+func _on_hud_commands_set_speed(new_speed: float):
+	MAX_SPEED = new_speed
 
 func _process(delta: float) -> void:
 	if not multiplayer.is_server() or MultiplayerManager.host_mode_enabled:

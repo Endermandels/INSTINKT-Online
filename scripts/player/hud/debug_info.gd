@@ -2,9 +2,11 @@ extends Control
 class_name DebugInfo
 
 @export var player: Player
+@export var stats: Stats
 @export var hud_commands: HUDCommands
 
 @onready var position_label := $VBoxContainer/Position
+@onready var stink_intensity_label := $VBoxContainer/StinkIntensity
 
 func _ready():
 	hide()
@@ -18,3 +20,4 @@ func _process(delta: float) -> void:
 		return
 	
 	position_label.text = str(player.global_position)
+	stink_intensity_label.text = str(snapped(stats.stink_intensity, 0.01))

@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=34 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
@@ -148,6 +148,8 @@ shader_parameter/lod = 0.0
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6ly25"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dllko"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b21eq"]
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "spray_fx", "input")]
 y_sort_enabled = true
@@ -362,7 +364,8 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 8
 theme_override_styles/normal = SubResource("StyleBoxEmpty_6ly25")
 
-[node name="DebugInfo" type="Control" parent="HUD" node_paths=PackedStringArray("player", "hud_commands")]
+[node name="DebugInfo" type="Control" parent="HUD" node_paths=PackedStringArray("player", "stats", "hud_commands")]
+z_index = 10
 anchors_preset = 0
 offset_left = -160.0
 offset_top = -91.0
@@ -370,6 +373,7 @@ offset_right = -120.0
 offset_bottom = -51.0
 script = ExtResource("18_bxl66")
 player = NodePath("../..")
+stats = NodePath("../../Stats")
 hud_commands = NodePath("../HUDCommands")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HUD/DebugInfo"]
@@ -383,4 +387,10 @@ offset_bottom = 45.0
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 theme_override_styles/normal = SubResource("StyleBoxEmpty_dllko")
-text = "asdfasdf"
+text = "1000.0, 1000.0"
+
+[node name="StinkIntensity" type="Label" parent="HUD/DebugInfo/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("StyleBoxEmpty_b21eq")
+text = "0.0"
