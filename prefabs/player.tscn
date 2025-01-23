@@ -45,7 +45,7 @@ emission_box_extents = Vector3(10, 1, 1)
 gravity = Vector3(0, 98, 0)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ok2ra"]
-radius = 170.658
+radius = 374.021
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6gd3c"]
 radius = 4.0
@@ -157,7 +157,6 @@ shader_parameter/lod = 0.0
 y_sort_enabled = true
 collision_mask = 4
 script = ExtResource("1_568lg")
-social_distancing = 80
 chat = NodePath("HUD/Chat")
 spray_fx = NodePath("HUD/SprayFX")
 debug_info = NodePath("HUD/DebugInfo")
