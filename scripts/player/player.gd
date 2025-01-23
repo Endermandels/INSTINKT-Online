@@ -126,7 +126,7 @@ func _on_hud_commands_zoom_camera(amount: float):
 	if amount <= 0:
 		return
 	camera.zoom = Vector2(amount, amount)
-	hud.scale = Vector2(1/amount, 1/amount)
+	hud.scale = Vector2(0.5/amount, 0.5/amount)
 
 func _on_hud_commands_set_speed(new_speed: float):
 	_set_speed.rpc_id(1, new_speed)

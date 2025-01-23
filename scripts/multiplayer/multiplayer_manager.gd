@@ -2,6 +2,8 @@ extends Node
 
 const SERVER_PORT = 4000
 
+signal connection_failed
+
 var player_scene := preload("res://prefabs/player.tscn")
 var _players_spawn_node: Node2D
 var host_mode_enabled = false
@@ -10,15 +12,25 @@ func _ready() -> void:
 	if OS.has_feature("dedicated_server"):
 		print("Starting dedicated server...")
 		MultiplayerManager.become_host()
+	
+	multiplayer.connection_failed.connect(connection_failed.emit)
+	multiplayer.server_disconnected.connect(connection_failed.emit)
 
 func join_host(server_ip: String = "localhost", username: String = ""):
 	print("Joining Host...")
 	var client_peer = ENetMultiplayerPeer.new()
-	client_peer.create_client(server_ip, SERVER_PORT)
+	var err = client_peer.create_client(server_ip, SERVER_PORT)
+	
+	if err != OK:
+		return false
+	
 	multiplayer.multiplayer_peer = client_peer # establishes that this instance is a client
 	
 	# Wait until connected to send the username
+	if multiplayer.connected_to_server.is_connected(_on_connected_to_server):
+		multiplayer.connected_to_server.disconnect(_on_connected_to_server)
 	multiplayer.connected_to_server.connect(_on_connected_to_server.bind(username))
+	return true
 
 func _on_connected_to_server(username: String):
 	_update_player_username.rpc_id(1, multiplayer.get_unique_id(), username)
@@ -39,7 +51,11 @@ func become_host(username: String = ""):
 	_players_spawn_node = get_tree().get_current_scene().get_node("Y-Sorted/Players")
 	
 	var server_peer = ENetMultiplayerPeer.new()
-	server_peer.create_server(SERVER_PORT)
+	var err = server_peer.create_server(SERVER_PORT)
+	
+	if err != OK:
+		return false
+	
 	multiplayer.multiplayer_peer = server_peer # establishes that this instance is a server
 	multiplayer.peer_connected.connect(_add_player)
 	multiplayer.peer_disconnected.connect(_del_player)
@@ -47,6 +63,8 @@ func become_host(username: String = ""):
 	if not OS.has_feature("dedicated_server"):
 		_add_player()
 		_update_player_username(1, username)
+	
+	return true
 
 func _add_player(id=1):
 	print("Player %s joined the game!" % id)

@@ -45,7 +45,7 @@ emission_box_extents = Vector3(10, 1, 1)
 gravity = Vector3(0, 98, 0)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ok2ra"]
-radius = 170.658
+radius = 374.021
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6gd3c"]
 radius = 4.0
@@ -157,7 +157,6 @@ shader_parameter/lod = 0.0
 y_sort_enabled = true
 collision_mask = 4
 script = ExtResource("1_568lg")
-social_distancing = 80
 chat = NodePath("HUD/Chat")
 spray_fx = NodePath("HUD/SprayFX")
 debug_info = NodePath("HUD/DebugInfo")
@@ -272,6 +271,7 @@ libraries = {
 autoplay = "idle"
 
 [node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(0.5, 0.5)
 
 [node name="HUD" type="Control" parent="."]
 z_index = 10
@@ -300,25 +300,25 @@ hud_commands = NodePath("../HUDCommands")
 z_index = 9
 material = SubResource("ShaderMaterial_33sqs")
 layout_mode = 0
-offset_left = -160.0
-offset_top = -91.0
-offset_right = 161.0
-offset_bottom = 90.0
+offset_left = -320.0
+offset_top = -180.0
+offset_right = 320.0
+offset_bottom = 180.0
 
 [node name="StinkyColorRect" type="ColorRect" parent="HUD/SprayFX"]
 layout_mode = 0
-offset_left = -160.0
-offset_top = -91.0
-offset_right = 161.0
-offset_bottom = 90.0
+offset_left = -320.0
+offset_top = -181.0
+offset_right = 320.0
+offset_bottom = 180.0
 color = Color(0.729412, 1, 0, 0.505882)
 
 [node name="SprayedColorRect" type="ColorRect" parent="HUD/SprayFX"]
 layout_mode = 0
-offset_left = -160.0
-offset_top = -91.0
-offset_right = 161.0
-offset_bottom = 90.0
+offset_left = -320.0
+offset_top = -181.0
+offset_right = 320.0
+offset_bottom = 180.0
 color = Color(0.890196, 0.811765, 0, 0.737255)
 
 [node name="Chat" type="Control" parent="HUD"]
@@ -330,10 +330,10 @@ script = ExtResource("8_p4sqx")
 
 [node name="ChatBox" type="LineEdit" parent="HUD/Chat"]
 layout_mode = 2
-offset_left = -154.0
-offset_top = 69.0
-offset_right = -114.0
-offset_bottom = 85.0
+offset_left = -313.0
+offset_top = 158.0
+offset_right = -273.0
+offset_bottom = 174.0
 theme_override_font_sizes/font_size = 8
 placeholder_text = "Type Here"
 max_length = 90
@@ -341,14 +341,14 @@ expand_to_text_length = true
 
 [node name="ChatDisplayContainer" type="CenterContainer" parent="HUD/Chat"]
 layout_mode = 0
-offset_top = -28.0
+offset_top = -42.0
 offset_right = 40.0
-offset_bottom = 12.0
+offset_bottom = -2.0
 use_top_left = true
 
 [node name="Label" type="Label" parent="HUD/Chat/ChatDisplayContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 16
 text = ". . ."
 
 [node name="ChatDisplayTimer" type="Timer" parent="HUD/Chat"]
@@ -357,23 +357,23 @@ one_shot = true
 
 [node name="Username" type="CenterContainer" parent="HUD"]
 layout_mode = 0
-offset_top = -18.0
+offset_top = -21.0
 offset_right = 40.0
-offset_bottom = 22.0
+offset_bottom = 19.0
 use_top_left = true
 
 [node name="Label" type="Label" parent="HUD/Username"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxEmpty_6ly25")
 
 [node name="DebugInfo" type="Control" parent="HUD" node_paths=PackedStringArray("player", "stats", "hud_commands")]
 z_index = 10
 anchors_preset = 0
-offset_left = -160.0
-offset_top = -91.0
-offset_right = -120.0
-offset_bottom = -51.0
+offset_left = -313.0
+offset_top = -180.0
+offset_right = -273.0
+offset_bottom = -140.0
 script = ExtResource("18_bxl66")
 player = NodePath("../..")
 stats = NodePath("../../Stats")
