@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=35 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
@@ -15,7 +15,9 @@
 [ext_resource type="Shader" path="res://shaders/blur.gdshader" id="10_uaoty"]
 [ext_resource type="Script" path="res://scripts/player/player_detection.gd" id="10_uv1ro"]
 [ext_resource type="Script" path="res://scripts/player/hud/spray_fx.gd" id="12_s6slq"]
+[ext_resource type="Script" path="res://scripts/player/hud/commands.gd" id="14_lmnxi"]
 [ext_resource type="AudioStream" uid="uid://cythx6reb1slv" path="res://assets/sfx/spray.mp3" id="14_xt5nf"]
+[ext_resource type="Script" path="res://scripts/player/hud/debug_info.gd" id="18_bxl66"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_0euwh"]
 properties/0/path = NodePath(".:player_id")
@@ -145,13 +147,20 @@ shader_parameter/lod = 0.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6ly25"]
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "spray_fx", "input")]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dllko"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b21eq"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_we4jl"]
+
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "spray_fx", "debug_info", "input")]
 y_sort_enabled = true
 collision_mask = 4
 script = ExtResource("1_568lg")
 social_distancing = 80
 chat = NodePath("HUD/Chat")
 spray_fx = NodePath("HUD/SprayFX")
+debug_info = NodePath("HUD/DebugInfo")
 input = NodePath("Input")
 
 [node name="RollbackSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root")]
@@ -159,7 +168,7 @@ script = ExtResource("2_5nw8e")
 root = NodePath("..")
 enable_prediction = true
 state_properties = Array[String]([":global_transform", ":velocity", "Spray:rotation"])
-input_properties = Array[String](["Input:h_dir", "Input:v_dir", "Input:use_special", "Input:mouse_pos"])
+input_properties = Array[String](["Input:h_dir", "Input:v_dir", "Input:use_special", "Input:mouse_pos", "Input:teleport_pos"])
 
 [node name="TickInterpolator" type="Node" parent="." node_paths=PackedStringArray("root")]
 script = ExtResource("3_w3vht")
@@ -189,9 +198,10 @@ stream = ExtResource("6_wa082")
 volume_db = -10.0
 max_distance = 200.0
 
-[node name="Input" type="Node2D" parent="." node_paths=PackedStringArray("chat")]
+[node name="Input" type="Node2D" parent="." node_paths=PackedStringArray("chat", "hud_commands")]
 script = ExtResource("2_o4wky")
 chat = NodePath("../HUD/Chat")
+hud_commands = NodePath("../HUD/HUDCommands")
 
 [node name="Spray" type="Node2D" parent="." node_paths=PackedStringArray("input", "spray_sound")]
 position = Vector2(-4, 0)
@@ -220,12 +230,13 @@ texture = ExtResource("1_0hdi7")
 hframes = 8
 vframes = 5
 
-[node name="SprayHurtbox" type="Area2D" parent="." node_paths=PackedStringArray("stats", "sprite")]
+[node name="SprayHurtbox" type="Area2D" parent="." node_paths=PackedStringArray("stats", "sprite", "hud_commands")]
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("4_wpyme")
 stats = NodePath("../Stats")
 sprite = NodePath("../Sprite2D")
+hud_commands = NodePath("../HUD/HUDCommands")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SprayHurtbox"]
 position = Vector2(0, -2)
@@ -270,7 +281,11 @@ offset_right = 40.0
 offset_bottom = 40.0
 theme = ExtResource("6_hscjn")
 
-[node name="SprayFX" type="Control" parent="HUD" node_paths=PackedStringArray("spray_hurtbox", "player_detection", "stats")]
+[node name="HUDCommands" type="Node" parent="HUD" node_paths=PackedStringArray("chat")]
+script = ExtResource("14_lmnxi")
+chat = NodePath("../Chat")
+
+[node name="SprayFX" type="Control" parent="HUD" node_paths=PackedStringArray("spray_hurtbox", "player_detection", "stats", "hud_commands")]
 visible = false
 anchors_preset = 0
 offset_right = 40.0
@@ -279,6 +294,7 @@ script = ExtResource("12_s6slq")
 spray_hurtbox = NodePath("../../SprayHurtbox")
 player_detection = NodePath("../../PlayerDetection")
 stats = NodePath("../../Stats")
+hud_commands = NodePath("../HUDCommands")
 
 [node name="BlurColorRect" type="ColorRect" parent="HUD/SprayFX"]
 z_index = 9
@@ -350,3 +366,43 @@ use_top_left = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 theme_override_styles/normal = SubResource("StyleBoxEmpty_6ly25")
+
+[node name="DebugInfo" type="Control" parent="HUD" node_paths=PackedStringArray("player", "stats", "hud_commands")]
+z_index = 10
+anchors_preset = 0
+offset_left = -160.0
+offset_top = -91.0
+offset_right = -120.0
+offset_bottom = -51.0
+script = ExtResource("18_bxl66")
+player = NodePath("../..")
+stats = NodePath("../../Stats")
+hud_commands = NodePath("../HUDCommands")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/DebugInfo"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 5.0
+offset_right = 46.0
+offset_bottom = 45.0
+
+[node name="Position" type="Label" parent="HUD/DebugInfo/VBoxContainer"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("StyleBoxEmpty_dllko")
+text = "position: (1000.0, 1000.0)"
+
+[node name="StinkIntensity" type="Label" parent="HUD/DebugInfo/VBoxContainer"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("StyleBoxEmpty_b21eq")
+text = "stink: 0.0"
+
+[node name="PID" type="Label" parent="HUD/DebugInfo/VBoxContainer"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("StyleBoxEmpty_we4jl")
+text = "pid: 1"

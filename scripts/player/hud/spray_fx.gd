@@ -4,6 +4,7 @@ class_name SprayFX
 @export var spray_hurtbox: SprayHurtbox
 @export var player_detection: PlayerDetection
 @export var stats: Stats
+@export var hud_commands: HUDCommands
 
 @onready var sprayed_color_rect := $SprayedColorRect
 @onready var stinky_color_rect := $StinkyColorRect
@@ -21,6 +22,7 @@ func _ready():
 	stinky_color_rect.color.a = 0
 	_blur(0)
 	spray_hurtbox.connect("sprayed", _on_spray_hurtbox_sprayed)
+	hud_commands.connect("clear_stink", _on_hud_commands_clear_stink)
 
 func _on_spray_hurtbox_sprayed():
 	if not is_multiplayer_authority():
@@ -36,6 +38,14 @@ func _on_spray_hurtbox_sprayed():
 	tween.tween_property(sprayed_color_rect, "color", Color(0.89, 0.812, 0, 0.737), 5)
 	tween.chain().tween_property(sprayed_color_rect, "color:a", 0, spray_hurtbox.timer.wait_time/4)
 	tween.parallel().tween_property(self, "sprayed_lod", 0, spray_hurtbox.timer.wait_time/4)
+
+func _on_hud_commands_clear_stink():
+	if tween:
+		tween.kill()
+	sprayed_color_rect.color.a = 0
+	stinky_color_rect.color.a = 0
+	sprayed_lod = 0
+	_blur(0)
 
 func _blur(amount: float):
 	blur_color_rect.material.set_shader_parameter("lod",amount)

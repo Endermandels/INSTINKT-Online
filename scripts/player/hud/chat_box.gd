@@ -5,11 +5,14 @@ class_name Chat
 @onready var chat_box := $ChatBox
 @onready var chat_display_timer := $ChatDisplayTimer
 
+const COMMAND_SYMBOL = '\\'
+
 var tween: Tween = null
 
 signal chat_opened
 signal chat_closed
 signal sent_message(message: String)
+signal command_submitted(command: String)
 
 func _ready():
 	chat_box.hide()
@@ -29,9 +32,19 @@ func _handle_toggle():
 			chat_box.call_deferred("release_focus")
 			chat_box.clear()
 			chat_closed.emit()
+	if Input.is_action_just_pressed("ui_cancel") and chat_box.visible:
+		chat_box.hide()
+		chat_box.call_deferred("release_focus")
+		chat_box.clear()
+		chat_closed.emit()
 
 func _on_chat_box_text_submitted(submitted_string: String):
 	if submitted_string.strip_edges() == "":
+		return
+	
+	if submitted_string.begins_with(COMMAND_SYMBOL):
+		command_submitted.emit(submitted_string.right(submitted_string.length()-1))
+		chat_box.delete_text(1, submitted_string.length()) # leave the command symbol
 		return
 	
 	# Send message to server

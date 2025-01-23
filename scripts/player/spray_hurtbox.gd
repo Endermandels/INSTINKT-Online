@@ -3,6 +3,7 @@ class_name SprayHurtbox
 
 @export var stats: Stats
 @export var sprite: Sprite2D
+@export var hud_commands: HUDCommands
 
 @onready var timer := $SprayTimer
 @onready var particles := $GPUParticles2D
@@ -14,6 +15,8 @@ signal effects_resolved # When the spray dissapates
 
 func _ready():
 	timer.connect("timeout", _on_timer_timeout.rpc)
+	hud_commands.connect("clear_stink", _on_hud_commands_clear_stink.rpc)
+	hud_commands.connect("get_sprayed", get_sprayed.rpc)
 	particles.emitting = false
 
 func _process(delta: float) -> void:
@@ -28,7 +31,7 @@ func _apply_spray_effects():
 	particles.emitting = true
 
 @rpc("any_peer", "call_local", "reliable")
-func get_sprayed(spraying_player: Player):
+func get_sprayed():
 	if tween:
 		tween.kill()
 	_apply_spray_effects()
@@ -37,8 +40,15 @@ func get_sprayed(spraying_player: Player):
 
 @rpc("any_peer", "call_local", "reliable")
 func _on_timer_timeout():
+	if tween:
+		tween.kill()
 	tween = get_tree().create_tween()
 	tween.tween_property(sprite, "modulate:b", 1, 1)
 	particles.emitting = false
 	stats.stink_intensity = 0
 	effects_resolved.emit()
+
+@rpc("any_peer", "call_local", "reliable")
+func _on_hud_commands_clear_stink():
+	timer.stop()
+	timer.timeout.emit()

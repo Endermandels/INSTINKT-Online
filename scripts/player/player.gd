@@ -1,11 +1,15 @@
 extends CharacterBody2D
 class_name Player
 
-const MAX_SPEED = 100.0
+
+@export var MAX_SPEED = 100.0
 const ACCEL = 0.7
 const FRICTION = 0.9
 
 var username: String = ""
+
+@export var social_distancing = 100
+@export var stink_push_intensity = 0.7
 
 @onready var anim_player := $AnimationPlayer
 @onready var sprite := $Sprite2D
@@ -18,13 +22,14 @@ var username: String = ""
 @onready var step_sound := $ProximitySFX/Step
 @onready var step_cooldown_timer := $Timers/StepCooldown
 @onready var username_label := $HUD/Username/Label
-
-@export var social_distancing = 100
-@export var stink_push_intensity = 0.7
+@onready var hud_commands := $HUD/HUDCommands
+@onready var hud := $HUD
+@onready var collision := $CollisionShape2D
 
 # Giving Client Authority
 @export var chat: Chat
 @export var spray_fx: SprayFX
+@export var debug_info: DebugInfo
 @export var input: MultiplayerInput
 @export var player_id := 1:
 	set(id):
@@ -32,12 +37,16 @@ var username: String = ""
 		input.set_multiplayer_authority(id) # Give client authority over inputs
 		chat.set_multiplayer_authority(id) # Give client authority over chat
 		spray_fx.set_multiplayer_authority(id) # etc.
+		debug_info.set_multiplayer_authority(id)
 
 func _ready() -> void:
 	if multiplayer.get_unique_id() == player_id:
 		# Only this player should have an active camera
 		camera.make_current()
 		step_cooldown_timer.connect("timeout", _on_step_cooldown_timer_timeout.rpc)
+		hud_commands.connect("zoom_camera", _on_hud_commands_zoom_camera)
+		hud_commands.connect("set_speed", _on_hud_commands_set_speed)
+		hud_commands.connect("toggle_collision", _on_hud_commands_toggle_collision.rpc_id.bind(1))
 	else:
 		# All other players should not be active in the same client
 		camera.enabled = false
@@ -74,6 +83,9 @@ func _apply_animations(delta: float):
 		anim_player.play("spray")
 
 func _rollback_tick(delta: float, tick: float, is_fresh: bool):
+	if input.teleport_pos != Vector2.ZERO:
+		global_position = input.teleport_pos
+		input.teleport_pos = Vector2.ZERO
 	_apply_movement(delta)
 
 func _apply_movement(delta: float):
@@ -109,6 +121,23 @@ func _apply_movement(delta: float):
 func _on_step_cooldown_timer_timeout():
 	step_sound.pitch_scale = randf_range(1,1.2)
 	step_sound.play()
+
+func _on_hud_commands_zoom_camera(amount: float):
+	if amount <= 0:
+		return
+	camera.zoom = Vector2(amount, amount)
+	hud.scale = Vector2(1/amount, 1/amount)
+
+func _on_hud_commands_set_speed(new_speed: float):
+	_set_speed.rpc_id(1, new_speed)
+
+@rpc("any_peer", "call_local", "reliable")
+func _set_speed(new_speed: float):
+	MAX_SPEED = new_speed
+
+@rpc("any_peer", "call_local", "reliable")
+func _on_hud_commands_toggle_collision():
+	collision.set_deferred("disabled", not collision.disabled)
 
 func _process(delta: float) -> void:
 	if not multiplayer.is_server() or MultiplayerManager.host_mode_enabled:
