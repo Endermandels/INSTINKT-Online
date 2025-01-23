@@ -30,6 +30,11 @@ func _handle_toggle():
 			chat_box.call_deferred("release_focus")
 			chat_box.clear()
 			chat_closed.emit()
+	if Input.is_action_just_pressed("ui_cancel") and chat_box.visible:
+		chat_box.hide()
+		chat_box.call_deferred("release_focus")
+		chat_box.clear()
+		chat_closed.emit()
 
 func _on_chat_box_text_submitted(submitted_string: String):
 	if submitted_string.strip_edges() == "":
