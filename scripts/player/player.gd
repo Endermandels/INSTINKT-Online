@@ -10,6 +10,7 @@ var username: String = ""
 
 @export var social_distancing = 100
 @export var stink_push_intensity = 0.7
+@export var sprayed_slowness = 80
 
 @onready var anim_player := $AnimationPlayer
 @onready var sprite := $Sprite2D
@@ -105,8 +106,11 @@ func _apply_movement(delta: float):
 	if anim_player.current_animation == "spray":
 		dir = Vector2.ZERO
 	
+	# Slow sprayed players down
+	var adjusted_speed = MAX_SPEED - (stats.stink_intensity**3)*sprayed_slowness
+	
 	if dir != Vector2.ZERO:
-		velocity = velocity.lerp(dir*MAX_SPEED, ACCEL)
+		velocity = velocity.lerp(dir*adjusted_speed, ACCEL)
 		if step_cooldown_timer.is_stopped():
 			step_cooldown_timer.start()
 	else:
