@@ -10,7 +10,7 @@ class_name DebugInfo
 
 func _ready():
 	hide()
-	hud_commands.connect("debug", _on_hud_commands_debug)
+	hud_commands.connect("toggle_debug", _on_hud_commands_debug)
 
 func _on_hud_commands_debug():
 	visible = not visible

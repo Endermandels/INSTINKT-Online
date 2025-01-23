@@ -24,6 +24,7 @@ var username: String = ""
 @onready var username_label := $HUD/Username/Label
 @onready var hud_commands := $HUD/HUDCommands
 @onready var hud := $HUD
+@onready var collision := $CollisionShape2D
 
 # Giving Client Authority
 @export var chat: Chat
@@ -43,6 +44,7 @@ func _ready() -> void:
 		step_cooldown_timer.connect("timeout", _on_step_cooldown_timer_timeout.rpc)
 		hud_commands.connect("zoom_camera", _on_hud_commands_zoom_camera)
 		hud_commands.connect("set_speed", _on_hud_commands_set_speed)
+		hud_commands.connect("toggle_collision", _on_hud_commands_toggle_collision)
 	else:
 		# All other players should not be active in the same client
 		camera.enabled = false
@@ -126,6 +128,9 @@ func _on_hud_commands_zoom_camera(amount: float):
 
 func _on_hud_commands_set_speed(new_speed: float):
 	MAX_SPEED = new_speed
+
+func _on_hud_commands_toggle_collision():
+	collision.set_deferred("disabled", not collision.disabled)
 
 func _process(delta: float) -> void:
 	if not multiplayer.is_server() or MultiplayerManager.host_mode_enabled:

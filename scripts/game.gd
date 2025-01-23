@@ -8,6 +8,7 @@ class_name Lobby
 @onready var floor_tile_map := $Floor
 @onready var floor2_tile_map := $Floor2
 @onready var floor3_tile_map := $Floor3
+@onready var floor4_tile_map := $Floor4
 @onready var shadows_tile_map := $"Shadows"
 @onready var decoration_tile_map := $"Y-Sorted/Decoration"
 @onready var small_objects_tile_map := $"Y-Sorted/SmallObjects"
@@ -20,6 +21,7 @@ func _set_tile_map_layer_visibility(visibility: bool):
 	floor_tile_map.visible = visibility
 	floor2_tile_map.visible = visibility
 	floor3_tile_map.visible = visibility
+	floor4_tile_map.visible = visibility
 	decoration_tile_map.visible = visibility
 	shadows_tile_map.visible = visibility
 	small_objects_tile_map.visible = visibility
