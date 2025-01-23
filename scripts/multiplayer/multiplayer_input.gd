@@ -6,9 +6,11 @@ var h_dir: float = 0.0 # horizontal direction
 var v_dir: float = 0.0 # vertical direction
 var use_special: bool = false
 var mouse_pos: Vector2 = Vector2.ZERO
+var teleport_pos: Vector2 = Vector2.ZERO
 
 # Client-side
 @export var chat: Chat
+@export var hud_commands: HUDCommands
 
 var pause_input = false
 
@@ -22,7 +24,8 @@ func _ready():
 	
 	chat.connect("chat_opened", _on_chat_opened)
 	chat.connect("chat_closed", _on_chat_closed)
-	
+	hud_commands.connect("teleport", _on_hud_commands_teleport)
+
 	h_dir = Input.get_axis("ui_left", "ui_right")
 	v_dir = Input.get_axis("ui_up", "ui_down")
 	use_special = Input.is_action_just_pressed("special")
@@ -32,6 +35,9 @@ func _on_chat_opened():
 
 func _on_chat_closed():
 	pause_input = false
+
+func _on_hud_commands_teleport(x: float, y: float):
+	teleport_pos = Vector2(x, y)
 
 func _gather():
 	# Align with the synchronized network tick loop

@@ -37,6 +37,7 @@ func _on_chat_box_text_submitted(submitted_string: String):
 	
 	if submitted_string.begins_with("`"):
 		command_submitted.emit(submitted_string.right(submitted_string.length()-1))
+		chat_box.clear()
 		return
 	
 	# Send message to server

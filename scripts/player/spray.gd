@@ -79,7 +79,7 @@ func _search_for_hurtboxes():
 	
 	if len(closest_hurtboxes) > 0:
 		for hurtbox in closest_hurtboxes:
-			hurtbox.get_sprayed.rpc(get_parent())
+			hurtbox.get_sprayed.rpc()
 		area.monitoring = false # stop scanning after finding a target
 
 func _process(delta: float) -> void:

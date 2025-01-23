@@ -16,6 +16,7 @@ signal effects_resolved # When the spray dissapates
 func _ready():
 	timer.connect("timeout", _on_timer_timeout.rpc)
 	hud_commands.connect("clear_stink", _on_hud_commands_clear_stink)
+	hud_commands.connect("get_sprayed", get_sprayed.rpc)
 	particles.emitting = false
 
 func _process(delta: float) -> void:
@@ -30,7 +31,7 @@ func _apply_spray_effects():
 	particles.emitting = true
 
 @rpc("any_peer", "call_local", "reliable")
-func get_sprayed(spraying_player: Player):
+func get_sprayed():
 	if tween:
 		tween.kill()
 	_apply_spray_effects()
