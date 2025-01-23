@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=35 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
@@ -151,13 +151,16 @@ shader_parameter/lod = 0.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b21eq"]
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "spray_fx", "input")]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_we4jl"]
+
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "spray_fx", "debug_info", "input")]
 y_sort_enabled = true
 collision_mask = 4
 script = ExtResource("1_568lg")
 social_distancing = 80
 chat = NodePath("HUD/Chat")
 spray_fx = NodePath("HUD/SprayFX")
+debug_info = NodePath("HUD/DebugInfo")
 input = NodePath("Input")
 
 [node name="RollbackSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root")]
@@ -384,13 +387,22 @@ offset_right = 46.0
 offset_bottom = 45.0
 
 [node name="Position" type="Label" parent="HUD/DebugInfo/VBoxContainer"]
+modulate = Color(0, 0, 0, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 theme_override_styles/normal = SubResource("StyleBoxEmpty_dllko")
-text = "1000.0, 1000.0"
+text = "position: (1000.0, 1000.0)"
 
 [node name="StinkIntensity" type="Label" parent="HUD/DebugInfo/VBoxContainer"]
+modulate = Color(0, 0, 0, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 theme_override_styles/normal = SubResource("StyleBoxEmpty_b21eq")
-text = "0.0"
+text = "stink: 0.0"
+
+[node name="PID" type="Label" parent="HUD/DebugInfo/VBoxContainer"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("StyleBoxEmpty_we4jl")
+text = "pid: 1"

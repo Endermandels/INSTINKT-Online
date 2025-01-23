@@ -7,6 +7,7 @@ class_name DebugInfo
 
 @onready var position_label := $VBoxContainer/Position
 @onready var stink_intensity_label := $VBoxContainer/StinkIntensity
+@onready var pid := $VBoxContainer/PID
 
 func _ready():
 	hide()
@@ -19,5 +20,6 @@ func _process(delta: float) -> void:
 	if not is_multiplayer_authority():
 		return
 	
-	position_label.text = str(player.global_position)
-	stink_intensity_label.text = str(snapped(stats.stink_intensity, 0.01))
+	position_label.text = 'position: ' + str(player.global_position)
+	stink_intensity_label.text = 'stink: ' + str(snapped(stats.stink_intensity, 0.01))
+	pid.text = 'pid: ' + player.name

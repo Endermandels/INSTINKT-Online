@@ -29,6 +29,7 @@ var username: String = ""
 # Giving Client Authority
 @export var chat: Chat
 @export var spray_fx: SprayFX
+@export var debug_info: DebugInfo
 @export var input: MultiplayerInput
 @export var player_id := 1:
 	set(id):
@@ -36,6 +37,7 @@ var username: String = ""
 		input.set_multiplayer_authority(id) # Give client authority over inputs
 		chat.set_multiplayer_authority(id) # Give client authority over chat
 		spray_fx.set_multiplayer_authority(id) # etc.
+		debug_info.set_multiplayer_authority(id)
 
 func _ready() -> void:
 	if multiplayer.get_unique_id() == player_id:

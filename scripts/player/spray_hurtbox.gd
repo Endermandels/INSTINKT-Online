@@ -15,7 +15,7 @@ signal effects_resolved # When the spray dissapates
 
 func _ready():
 	timer.connect("timeout", _on_timer_timeout.rpc)
-	hud_commands.connect("clear_stink", _on_hud_commands_clear_stink)
+	hud_commands.connect("clear_stink", _on_hud_commands_clear_stink.rpc)
 	hud_commands.connect("get_sprayed", get_sprayed.rpc)
 	particles.emitting = false
 
@@ -48,6 +48,7 @@ func _on_timer_timeout():
 	stats.stink_intensity = 0
 	effects_resolved.emit()
 
+@rpc("any_peer", "call_local", "reliable")
 func _on_hud_commands_clear_stink():
 	timer.stop()
 	timer.timeout.emit()
