@@ -1,56 +1,46 @@
 extends Node2D
 class_name Spray
 
-@onready var sprite := $Sprite2D
-@onready var area := $Sprite2D/Area2D
+@onready var spray_particles := $GPUParticles2D
+@onready var spray_area_timer := $SprayAreaTimer
+@onready var area := $Area2D
 
 @export var input: MultiplayerInput
 @export var fade_duration: float = 0.5
 @export var splash_radius: int = 10
 @export var spray_sound: AudioStreamPlayer2D
 
-var tween: Tween
 
 signal released # When the player sprays
 
 func _ready():
 	area.monitoring = false
-	sprite.hide()
+	spray_particles.emitting = false
 	self.connect("released", _on_spray_released.rpc)
+	spray_area_timer.connect("timeout", _on_spray_area_timer_timeout)
 
 func _look_at_mouse():
-	sprite.look_at(input.mouse_pos)
-	sprite.rotation_degrees = wrapf(sprite.rotation_degrees, 0.0, 360.0) # keeps degrees within 0-360
-	if sprite.rotation_degrees < 180:
-		sprite.z_index = 2
+	var dir = global_position.direction_to(input.mouse_pos)
+	rotation = dir.angle()
+	print(rotation)
+	if dir.y > 0:
+		print("in front")
+		spray_particles.z_index = 2
 	else:
-		sprite.z_index = 0
-
-func _reset_sprite():
-	sprite.modulate.a = 1
-	area.monitoring = true # Used to enable the area for collision detection
-
-func _tween_sprite():
-	if tween:
-		tween.kill()
-	
-	tween = get_tree().create_tween()
-	tween.tween_property(sprite, "modulate:a", 0, fade_duration)
-	tween.connect("finished", _on_tween_finished)
+		spray_particles.z_index = 0
 
 func show_spray():
 	_look_at_mouse()
-	_reset_sprite()
-	sprite.show()
-	_tween_sprite()
+	area.monitoring = true # Used to enable the area for collision detection
+	spray_particles.emitting = true
+	spray_area_timer.start()
 	released.emit()
 
 @rpc("any_peer", "call_local", "reliable")
 func _on_spray_released():
 	spray_sound.play()
 
-func _on_tween_finished():
-	sprite.hide()
+func _on_spray_area_timer_timeout():
 	area.monitoring = false
 
 func _search_for_hurtboxes():

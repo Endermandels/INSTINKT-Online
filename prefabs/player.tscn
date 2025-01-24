@@ -10,7 +10,6 @@
 [ext_resource type="Script" path="res://scripts/player/spray.gd" id="6_mf2j2"]
 [ext_resource type="AudioStream" uid="uid://d0ts2de033myn" path="res://assets/sfx/small step.mp3" id="6_wa082"]
 [ext_resource type="Script" path="res://scripts/stats.gd" id="7_j2tcp"]
-[ext_resource type="Texture2D" uid="uid://dyd6pcjwgfxil" path="res://assets/art/Spray Sprite Sheet.png" id="8_81rfy"]
 [ext_resource type="Script" path="res://scripts/player/hud/chat_box.gd" id="8_p4sqx"]
 [ext_resource type="Shader" path="res://shaders/blur.gdshader" id="10_uaoty"]
 [ext_resource type="Script" path="res://scripts/player/player_detection.gd" id="10_uv1ro"]
@@ -30,9 +29,16 @@ properties/2/path = NodePath("HUD/Username/Label:text")
 properties/2/spawn = true
 properties/2/replication_mode = 1
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_rbnxd"]
+particle_flag_disable_z = true
+spread = 0.0
+initial_velocity_min = 424.72
+initial_velocity_max = 1000.0
+gravity = Vector3(0, 0, 0)
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_eah1l"]
 radius = 7.0
-height = 128.0
+height = 154.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sks23"]
 radius = 8.0
@@ -229,21 +235,28 @@ script = ExtResource("6_mf2j2")
 input = NodePath("../Input")
 spray_sound = NodePath("../ProximitySFX/Spray")
 
-[node name="Sprite2D" type="Sprite2D" parent="Spray"]
-scale = Vector2(4, 2)
-texture = ExtResource("8_81rfy")
-offset = Vector2(16, -0.5)
-vframes = 5
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Spray"]
+modulate = Color(1, 1, 0, 1)
+z_index = 3
+emitting = false
+amount = 100
+process_material = SubResource("ParticleProcessMaterial_rbnxd")
+lifetime = 0.15
+one_shot = true
+explosiveness = 1.0
 
-[node name="Area2D" type="Area2D" parent="Spray/Sprite2D"]
-position = Vector2(16, 9.53675e-07)
-scale = Vector2(0.25, 0.5)
+[node name="Area2D" type="Area2D" parent="Spray"]
+position = Vector2(64, 1.90735e-06)
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Spray/Sprite2D/Area2D"]
-rotation = 1.5708
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spray/Area2D"]
+position = Vector2(16, -1.90735e-06)
+rotation = 4.71239
 shape = SubResource("CapsuleShape2D_eah1l")
+
+[node name="SprayAreaTimer" type="Timer" parent="Spray"]
+wait_time = 0.1
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_0hdi7")
@@ -264,6 +277,7 @@ rotation = 1.5708
 shape = SubResource("CapsuleShape2D_sks23")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="SprayHurtbox"]
+visible = false
 modulate = Color(0.905882, 1, 0, 1)
 position = Vector2(0, -6)
 process_material = SubResource("ParticleProcessMaterial_hxqn1")
