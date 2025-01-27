@@ -272,6 +272,12 @@ stream = ExtResource("6_wa082")
 volume_db = -10.0
 max_distance = 200.0
 
+[node name="ShotgunSpray" type="AudioStreamPlayer2D" parent="ProximitySFX"]
+stream = ExtResource("14_xt5nf")
+volume_db = 7.0
+pitch_scale = 1.45
+max_distance = 350.0
+
 [node name="Input" type="Node2D" parent="." node_paths=PackedStringArray("chat", "hud_commands")]
 script = ExtResource("2_o4wky")
 chat = NodePath("../HUD/Chat")
@@ -312,7 +318,7 @@ wait_time = 0.1
 
 [node name="ShotgunSpray" type="Node2D" parent="Spray" node_paths=PackedStringArray("spray_sound", "player")]
 script = ExtResource("10_2aa7r")
-spray_sound = NodePath("../../ProximitySFX/Spray")
+spray_sound = NodePath("../../ProximitySFX/ShotgunSpray")
 player = NodePath("../..")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="Spray/ShotgunSpray"]

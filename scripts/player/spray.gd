@@ -16,7 +16,6 @@ func _look_at_mouse():
 	else:
 		z_index = 0
 
-# Long spray
 func show_spray():
 	_look_at_mouse()
 	long_spray.show_spray()
