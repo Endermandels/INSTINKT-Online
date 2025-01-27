@@ -8,6 +8,8 @@ const FRICTION = 0.9
 
 var username: String = ""
 
+var misting = false
+
 @export var social_distancing = 100
 @export var stink_push_intensity = 0.7
 @export var sprayed_slowness = 80
@@ -84,6 +86,13 @@ func _apply_animations(delta: float):
 		anim_player.play("spray")
 	elif input.use_shotgun_spray:
 		anim_player.play("shotgun_spray")
+	elif input.use_mist_spray and not misting:
+		anim_player.play("mist_spray", -1, 3, false)
+		misting = true
+	
+	# Allow player to move while holding down mist
+	if not input.use_mist_spray:
+		misting = false
 
 func _rollback_tick(delta: float, tick: float, is_fresh: bool):
 	if input.teleport_pos != Vector2.ZERO:
@@ -105,9 +114,8 @@ func _apply_movement(delta: float):
 			dir -= global_position.direction_to(player.global_position) * stink_push_intensity
 	
 	# Do not move while playing the spray animation
-	if anim_player.current_animation.contains("spray"):
+	if anim_player.current_animation.contains("spray") and anim_player.current_animation != "mist_spray":
 		dir = Vector2.ZERO
-	
 	
 	if dir != Vector2.ZERO:
 		# Slow sprayed players down

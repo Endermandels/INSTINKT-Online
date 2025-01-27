@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=45 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
@@ -7,14 +7,16 @@
 [ext_resource type="Script" path="res://addons/netfox/tick-interpolator.gd" id="3_w3vht"]
 [ext_resource type="Script" path="res://scripts/player/spray_hurtbox.gd" id="4_wpyme"]
 [ext_resource type="Theme" uid="uid://cne60462k31hi" path="res://assets/HUD_theme.tres" id="6_hscjn"]
-[ext_resource type="Script" path="res://scripts/player/spray.gd" id="6_mf2j2"]
+[ext_resource type="Script" path="res://scripts/player/spray/spray.gd" id="6_mf2j2"]
 [ext_resource type="AudioStream" uid="uid://d0ts2de033myn" path="res://assets/sfx/small step.mp3" id="6_wa082"]
 [ext_resource type="Script" path="res://scripts/stats.gd" id="7_j2tcp"]
+[ext_resource type="AudioStream" uid="uid://bvb631uw6usbp" path="res://assets/sfx/mist spray.mp3" id="7_y5mgo"]
 [ext_resource type="Script" path="res://scripts/player/hud/chat_box.gd" id="8_p4sqx"]
-[ext_resource type="Script" path="res://scripts/player/long_spray.gd" id="9_rk017"]
-[ext_resource type="Script" path="res://scripts/player/shotgun_spray.gd" id="10_2aa7r"]
+[ext_resource type="Script" path="res://scripts/player/spray/long_spray.gd" id="9_rk017"]
+[ext_resource type="Script" path="res://scripts/player/spray/shotgun_spray.gd" id="10_2aa7r"]
 [ext_resource type="Shader" path="res://shaders/blur.gdshader" id="10_uaoty"]
 [ext_resource type="Script" path="res://scripts/player/player_detection.gd" id="10_uv1ro"]
+[ext_resource type="Script" path="res://scripts/player/spray/mist_spray.gd" id="11_vl2kl"]
 [ext_resource type="Script" path="res://scripts/player/hud/spray_fx.gd" id="12_s6slq"]
 [ext_resource type="Script" path="res://scripts/player/hud/commands.gd" id="14_lmnxi"]
 [ext_resource type="AudioStream" uid="uid://cythx6reb1slv" path="res://assets/sfx/spray.mp3" id="14_xt5nf"]
@@ -55,6 +57,18 @@ damping_max = 0.25
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_dyiyf"]
 radius = 25.0
 height = 70.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mlwbc"]
+particle_flag_disable_z = true
+spread = 49.874
+initial_velocity_min = 134.41
+initial_velocity_max = 252.69
+gravity = Vector3(0, 5, 0)
+turbulence_enabled = true
+turbulence_noise_strength = 20.0
+turbulence_noise_scale = 4.06
+turbulence_noise_speed = Vector3(0, 5, 0)
+turbulence_noise_speed_random = 3.1
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sks23"]
 radius = 8.0
@@ -186,10 +200,42 @@ tracks/1/keys = {
 }]
 }
 
+[sub_resource type="Animation" id="Animation_24upd"]
+resource_name = "mist_spray"
+length = 0.666675
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0833333, 0.166667, 0.416667, 0.583333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [16, 17, 18, 19, 20]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Spray")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.416667),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"show_mist_spray"
+}]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ngutj"]
 _data = {
 "RESET": SubResource("Animation_srcra"),
 "idle": SubResource("Animation_s1pcw"),
+"mist_spray": SubResource("Animation_24upd"),
 "run": SubResource("Animation_ranpq"),
 "shotgun_spray": SubResource("Animation_t7n8g"),
 "spray": SubResource("Animation_jphks")
@@ -242,7 +288,7 @@ script = ExtResource("2_5nw8e")
 root = NodePath("..")
 enable_prediction = true
 state_properties = Array[String]([":global_transform", ":velocity", "Spray:rotation"])
-input_properties = Array[String](["Input:h_dir", "Input:v_dir", "Input:mouse_pos", "Input:teleport_pos", "Input:use_long_spray", "Input:use_shotgun_spray"])
+input_properties = Array[String](["Input:h_dir", "Input:v_dir", "Input:mouse_pos", "Input:teleport_pos", "Input:use_long_spray", "Input:use_shotgun_spray", "Input:use_mist_spray"])
 
 [node name="TickInterpolator" type="Node" parent="." node_paths=PackedStringArray("root")]
 script = ExtResource("3_w3vht")
@@ -278,15 +324,22 @@ volume_db = 7.0
 pitch_scale = 1.45
 max_distance = 350.0
 
+[node name="MistSpray" type="AudioStreamPlayer2D" parent="ProximitySFX"]
+stream = ExtResource("7_y5mgo")
+volume_db = -5.0
+max_distance = 200.0
+parameters/looping = true
+
 [node name="Input" type="Node2D" parent="." node_paths=PackedStringArray("chat", "hud_commands")]
 script = ExtResource("2_o4wky")
 chat = NodePath("../HUD/Chat")
 hud_commands = NodePath("../HUD/HUDCommands")
 
-[node name="Spray" type="Node2D" parent="." node_paths=PackedStringArray("input")]
+[node name="Spray" type="Node2D" parent="." node_paths=PackedStringArray("input", "player")]
 position = Vector2(-4, 0)
 script = ExtResource("6_mf2j2")
 input = NodePath("../Input")
+player = NodePath("..")
 
 [node name="LongSpray" type="Node2D" parent="Spray" node_paths=PackedStringArray("spray_sound", "player")]
 script = ExtResource("9_rk017")
@@ -295,7 +348,6 @@ player = NodePath("../..")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="Spray/LongSpray"]
 modulate = Color(1, 1, 0, 1)
-z_index = 3
 emitting = false
 amount = 100
 process_material = SubResource("ParticleProcessMaterial_acneu")
@@ -323,7 +375,6 @@ player = NodePath("../..")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="Spray/ShotgunSpray"]
 modulate = Color(1, 1, 0, 1)
-z_index = 3
 emitting = false
 amount = 100
 process_material = SubResource("ParticleProcessMaterial_rbnxd")
@@ -342,13 +393,29 @@ shape = SubResource("CapsuleShape2D_dyiyf")
 [node name="SprayAreaTimer" type="Timer" parent="Spray/ShotgunSpray"]
 wait_time = 0.1
 
+[node name="MistSpray" type="Node2D" parent="Spray" node_paths=PackedStringArray("spray_sound", "player")]
+script = ExtResource("11_vl2kl")
+spray_sound = NodePath("../../ProximitySFX/MistSpray")
+player = NodePath("../..")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Spray/MistSpray"]
+modulate = Color(1, 1, 0, 1)
+scale = Vector2(0.5, 0.5)
+emitting = false
+amount = 3000
+process_material = SubResource("ParticleProcessMaterial_mlwbc")
+lifetime = 2.0
+
+[node name="MistAreaSpawnTimer" type="Timer" parent="Spray/MistSpray"]
+wait_time = 0.2
+one_shot = true
+
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_0hdi7")
 hframes = 8
 vframes = 5
 
 [node name="SprayHurtbox" type="Area2D" parent="." node_paths=PackedStringArray("stats", "sprite", "hud_commands")]
-visible = false
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("4_wpyme")
