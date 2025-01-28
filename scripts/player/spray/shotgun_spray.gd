@@ -20,9 +20,8 @@ func show_spray():
 	area.monitoring = true # Used to enable the area for collision detection
 	spray_particles.emitting = true
 	spray_area_timer.start()
-	_play_spray_sound.rpc()
+	_play_spray_sound()
 
-@rpc("any_peer", "call_local", "reliable")
 func _play_spray_sound():
 	spray_sound.play()
 

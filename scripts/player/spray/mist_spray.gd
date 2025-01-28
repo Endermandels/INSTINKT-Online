@@ -24,17 +24,15 @@ func show_spray():
 		get_tree().root.add_child(instance)
 		
 		if not spray_sound.playing:
-			_play_spray_sound.rpc()
+			_play_spray_sound()
 
 func hide_spray():
 	spray_particles.emitting = false
 	if spray_sound.playing:
-		_stop_spray_sound.rpc()
+		_stop_spray_sound()
 
-@rpc("any_peer", "call_local", "reliable")
 func _stop_spray_sound():
 	spray_sound.stop()
 
-@rpc("any_peer", "call_local", "reliable")
 func _play_spray_sound():
 	spray_sound.play()
