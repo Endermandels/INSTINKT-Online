@@ -526,28 +526,30 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("8_p4sqx")
 
-[node name="ChatBox" type="LineEdit" parent="HUD/Chat"]
-layout_mode = 2
-offset_left = -313.0
-offset_top = 158.0
-offset_right = -273.0
-offset_bottom = 174.0
-theme_override_font_sizes/font_size = 8
-placeholder_text = "Type Here"
-max_length = 90
-expand_to_text_length = true
-
 [node name="ChatDisplayContainer" type="CenterContainer" parent="HUD/Chat"]
 layout_mode = 0
-offset_top = -42.0
+offset_top = -40.0
 offset_right = 40.0
-offset_bottom = -2.0
 use_top_left = true
 
 [node name="Label" type="Label" parent="HUD/Chat/ChatDisplayContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = ". . ."
+
+[node name="ChatBoxContainer" type="CenterContainer" parent="HUD/Chat"]
+layout_mode = 0
+offset_top = 24.0
+offset_right = 45.5
+offset_bottom = 64.0
+use_top_left = true
+
+[node name="ChatBox" type="LineEdit" parent="HUD/Chat/ChatBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+placeholder_text = "Type Here"
+max_length = 90
+expand_to_text_length = true
 
 [node name="ChatDisplayTimer" type="Timer" parent="HUD/Chat"]
 wait_time = 7.0

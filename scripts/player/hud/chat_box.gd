@@ -2,7 +2,7 @@ extends Control
 class_name Chat
 
 @onready var chat_display_label := $ChatDisplayContainer/Label
-@onready var chat_box := $ChatBox
+@onready var chat_box := $ChatBoxContainer/ChatBox
 @onready var chat_display_timer := $ChatDisplayTimer
 
 const COMMAND_SYMBOL = '\\'
