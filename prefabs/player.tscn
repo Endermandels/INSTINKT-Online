@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=45 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
@@ -7,13 +7,16 @@
 [ext_resource type="Script" path="res://addons/netfox/tick-interpolator.gd" id="3_w3vht"]
 [ext_resource type="Script" path="res://scripts/player/spray_hurtbox.gd" id="4_wpyme"]
 [ext_resource type="Theme" uid="uid://cne60462k31hi" path="res://assets/HUD_theme.tres" id="6_hscjn"]
-[ext_resource type="Script" path="res://scripts/player/spray.gd" id="6_mf2j2"]
+[ext_resource type="Script" path="res://scripts/player/spray/spray.gd" id="6_mf2j2"]
 [ext_resource type="AudioStream" uid="uid://d0ts2de033myn" path="res://assets/sfx/small step.mp3" id="6_wa082"]
 [ext_resource type="Script" path="res://scripts/stats.gd" id="7_j2tcp"]
-[ext_resource type="Texture2D" uid="uid://dyd6pcjwgfxil" path="res://assets/art/Spray Sprite Sheet.png" id="8_81rfy"]
+[ext_resource type="AudioStream" uid="uid://bvb631uw6usbp" path="res://assets/sfx/mist spray.mp3" id="7_y5mgo"]
 [ext_resource type="Script" path="res://scripts/player/hud/chat_box.gd" id="8_p4sqx"]
+[ext_resource type="Script" path="res://scripts/player/spray/long_spray.gd" id="9_rk017"]
+[ext_resource type="Script" path="res://scripts/player/spray/shotgun_spray.gd" id="10_2aa7r"]
 [ext_resource type="Shader" path="res://shaders/blur.gdshader" id="10_uaoty"]
 [ext_resource type="Script" path="res://scripts/player/player_detection.gd" id="10_uv1ro"]
+[ext_resource type="Script" path="res://scripts/player/spray/mist_spray.gd" id="11_vl2kl"]
 [ext_resource type="Script" path="res://scripts/player/hud/spray_fx.gd" id="12_s6slq"]
 [ext_resource type="Script" path="res://scripts/player/hud/commands.gd" id="14_lmnxi"]
 [ext_resource type="AudioStream" uid="uid://cythx6reb1slv" path="res://assets/sfx/spray.mp3" id="14_xt5nf"]
@@ -30,9 +33,42 @@ properties/2/path = NodePath("HUD/Username/Label:text")
 properties/2/spawn = true
 properties/2/replication_mode = 1
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_acneu"]
+particle_flag_disable_z = true
+spread = 0.0
+initial_velocity_min = 510.75
+initial_velocity_max = 1000.0
+gravity = Vector3(0, 0, 0)
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_eah1l"]
-radius = 7.0
-height = 128.0
+radius = 6.0
+height = 152.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_rbnxd"]
+particle_flag_disable_z = true
+particle_flag_damping_as_friction = true
+spread = 38.557
+initial_velocity_min = 424.72
+initial_velocity_max = 1000.0
+gravity = Vector3(0, 0, 0)
+damping_min = 0.25
+damping_max = 0.25
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_dyiyf"]
+radius = 25.0
+height = 70.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mlwbc"]
+particle_flag_disable_z = true
+spread = 49.874
+initial_velocity_min = 134.41
+initial_velocity_max = 252.69
+gravity = Vector3(0, 5, 0)
+turbulence_enabled = true
+turbulence_noise_strength = 20.0
+turbulence_noise_scale = 4.06
+turbulence_noise_speed = Vector3(0, 5, 0)
+turbulence_noise_speed_random = 3.1
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sks23"]
 radius = 8.0
@@ -84,6 +120,37 @@ tracks/0/keys = {
 "values": [0, 1, 2, 3, 4, 5]
 }
 
+[sub_resource type="Animation" id="Animation_24upd"]
+resource_name = "mist_spray"
+length = 0.666675
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0833333, 0.166667, 0.416667, 0.583333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [16, 17, 18, 19, 20]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Spray")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.416667),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"show_mist_spray"
+}]
+}
+
 [sub_resource type="Animation" id="Animation_ranpq"]
 resource_name = "run"
 length = 0.666675
@@ -100,6 +167,37 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [8, 9, 10, 11, 12, 13, 14, 15]
+}
+
+[sub_resource type="Animation" id="Animation_t7n8g"]
+resource_name = "shotgun_spray"
+length = 0.666675
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0833333, 0.166667, 0.416667, 0.583333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [16, 17, 18, 19, 20]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Spray")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.416667),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"show_shotgun_spray"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_jphks"]
@@ -137,13 +235,36 @@ tracks/1/keys = {
 _data = {
 "RESET": SubResource("Animation_srcra"),
 "idle": SubResource("Animation_s1pcw"),
+"mist_spray": SubResource("Animation_24upd"),
 "run": SubResource("Animation_ranpq"),
+"shotgun_spray": SubResource("Animation_t7n8g"),
 "spray": SubResource("Animation_jphks")
 }
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_33sqs"]
 shader = ExtResource("10_uaoty")
 shader_parameter/lod = 0.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8phx5"]
+emission_shape = 1
+emission_sphere_radius = 65.87
+direction = Vector3(0, 0, -1)
+spread = 74.741
+initial_velocity_min = 935.47
+initial_velocity_max = 935.47
+gravity = Vector3(0, 100, 0)
+radial_accel_min = 100.0
+radial_accel_max = 100.0
+damping_min = 100.0
+damping_max = 100.0
+scale_min = 17.13
+scale_max = 44.01
+color = Color(0.968627, 1, 0.141176, 0.858824)
+hue_variation_min = -0.13
+hue_variation_max = 0.12
+turbulence_noise_scale = 3.211
+turbulence_initial_displacement_min = 1.49012e-06
+turbulence_initial_displacement_max = 1.49012e-06
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6ly25"]
 
@@ -167,7 +288,7 @@ script = ExtResource("2_5nw8e")
 root = NodePath("..")
 enable_prediction = true
 state_properties = Array[String]([":global_transform", ":velocity", "Spray:rotation"])
-input_properties = Array[String](["Input:h_dir", "Input:v_dir", "Input:use_special", "Input:mouse_pos", "Input:teleport_pos"])
+input_properties = Array[String](["Input:h_dir", "Input:v_dir", "Input:mouse_pos", "Input:teleport_pos", "Input:use_long_spray", "Input:use_shotgun_spray", "Input:use_mist_spray"])
 
 [node name="TickInterpolator" type="Node" parent="." node_paths=PackedStringArray("root")]
 script = ExtResource("3_w3vht")
@@ -197,32 +318,97 @@ stream = ExtResource("6_wa082")
 volume_db = -10.0
 max_distance = 200.0
 
+[node name="ShotgunSpray" type="AudioStreamPlayer2D" parent="ProximitySFX"]
+stream = ExtResource("14_xt5nf")
+volume_db = 7.0
+pitch_scale = 1.45
+max_distance = 350.0
+
+[node name="MistSpray" type="AudioStreamPlayer2D" parent="ProximitySFX"]
+stream = ExtResource("7_y5mgo")
+volume_db = -5.0
+max_distance = 200.0
+parameters/looping = true
+
 [node name="Input" type="Node2D" parent="." node_paths=PackedStringArray("chat", "hud_commands")]
 script = ExtResource("2_o4wky")
 chat = NodePath("../HUD/Chat")
 hud_commands = NodePath("../HUD/HUDCommands")
 
-[node name="Spray" type="Node2D" parent="." node_paths=PackedStringArray("input", "spray_sound")]
+[node name="Spray" type="Node2D" parent="." node_paths=PackedStringArray("input", "player")]
 position = Vector2(-4, 0)
 script = ExtResource("6_mf2j2")
 input = NodePath("../Input")
-spray_sound = NodePath("../ProximitySFX/Spray")
+player = NodePath("..")
 
-[node name="Sprite2D" type="Sprite2D" parent="Spray"]
-scale = Vector2(4, 2)
-texture = ExtResource("8_81rfy")
-offset = Vector2(16, -0.5)
-vframes = 5
+[node name="LongSpray" type="Node2D" parent="Spray" node_paths=PackedStringArray("spray_sound", "player")]
+script = ExtResource("9_rk017")
+spray_sound = NodePath("../../ProximitySFX/Spray")
+player = NodePath("../..")
 
-[node name="Area2D" type="Area2D" parent="Spray/Sprite2D"]
-position = Vector2(16, 9.53675e-07)
-scale = Vector2(0.25, 0.5)
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Spray/LongSpray"]
+modulate = Color(1, 1, 0, 1)
+emitting = false
+amount = 100
+process_material = SubResource("ParticleProcessMaterial_acneu")
+lifetime = 0.15
+one_shot = true
+explosiveness = 1.0
+
+[node name="Area2D" type="Area2D" parent="Spray/LongSpray"]
+position = Vector2(64, 1.90735e-06)
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Spray/Sprite2D/Area2D"]
-rotation = 1.5708
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spray/LongSpray/Area2D"]
+position = Vector2(16, -1.90735e-06)
+rotation = 4.71239
 shape = SubResource("CapsuleShape2D_eah1l")
+
+[node name="SprayAreaTimer" type="Timer" parent="Spray/LongSpray"]
+wait_time = 0.1
+
+[node name="ShotgunSpray" type="Node2D" parent="Spray" node_paths=PackedStringArray("spray_sound", "player")]
+script = ExtResource("10_2aa7r")
+spray_sound = NodePath("../../ProximitySFX/ShotgunSpray")
+player = NodePath("../..")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Spray/ShotgunSpray"]
+modulate = Color(1, 1, 0, 1)
+emitting = false
+amount = 100
+process_material = SubResource("ParticleProcessMaterial_rbnxd")
+lifetime = 0.1
+one_shot = true
+explosiveness = 1.0
+
+[node name="Area2D" type="Area2D" parent="Spray/ShotgunSpray"]
+position = Vector2(32, 0)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spray/ShotgunSpray/Area2D"]
+shape = SubResource("CapsuleShape2D_dyiyf")
+
+[node name="SprayAreaTimer" type="Timer" parent="Spray/ShotgunSpray"]
+wait_time = 0.1
+
+[node name="MistSpray" type="Node2D" parent="Spray" node_paths=PackedStringArray("spray_sound", "player")]
+script = ExtResource("11_vl2kl")
+spray_sound = NodePath("../../ProximitySFX/MistSpray")
+player = NodePath("../..")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Spray/MistSpray"]
+modulate = Color(1, 1, 0, 1)
+scale = Vector2(0.5, 0.5)
+emitting = false
+amount = 3000
+process_material = SubResource("ParticleProcessMaterial_mlwbc")
+lifetime = 2.0
+
+[node name="MistAreaSpawnTimer" type="Timer" parent="Spray/MistSpray"]
+wait_time = 0.2
+one_shot = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_0hdi7")
@@ -253,6 +439,7 @@ wait_time = 120.0
 one_shot = true
 
 [node name="PlayerDetection" type="Area2D" parent="."]
+visible = false
 collision_layer = 0
 script = ExtResource("10_uv1ro")
 
@@ -260,6 +447,7 @@ script = ExtResource("10_uv1ro")
 shape = SubResource("CircleShape2D_ok2ra")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_6gd3c")
 
@@ -321,6 +509,16 @@ offset_right = 320.0
 offset_bottom = 180.0
 color = Color(0.890196, 0.811765, 0, 0.737255)
 
+[node name="GPUParticles2D" type="GPUParticles2D" parent="HUD/SprayFX"]
+position = Vector2(-1, 0)
+emitting = false
+amount = 100
+process_material = SubResource("ParticleProcessMaterial_8phx5")
+lifetime = 2.0
+one_shot = true
+explosiveness = 1.0
+local_coords = true
+
 [node name="Chat" type="Control" parent="HUD"]
 z_index = 11
 anchors_preset = 0
@@ -328,28 +526,30 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("8_p4sqx")
 
-[node name="ChatBox" type="LineEdit" parent="HUD/Chat"]
-layout_mode = 2
-offset_left = -313.0
-offset_top = 158.0
-offset_right = -273.0
-offset_bottom = 174.0
-theme_override_font_sizes/font_size = 8
-placeholder_text = "Type Here"
-max_length = 90
-expand_to_text_length = true
-
 [node name="ChatDisplayContainer" type="CenterContainer" parent="HUD/Chat"]
 layout_mode = 0
-offset_top = -42.0
+offset_top = -40.0
 offset_right = 40.0
-offset_bottom = -2.0
 use_top_left = true
 
 [node name="Label" type="Label" parent="HUD/Chat/ChatDisplayContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = ". . ."
+
+[node name="ChatBoxContainer" type="CenterContainer" parent="HUD/Chat"]
+layout_mode = 0
+offset_top = 24.0
+offset_right = 45.5
+offset_bottom = 64.0
+use_top_left = true
+
+[node name="ChatBox" type="LineEdit" parent="HUD/Chat/ChatBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+placeholder_text = "Type Here"
+max_length = 90
+expand_to_text_length = true
 
 [node name="ChatDisplayTimer" type="Timer" parent="HUD/Chat"]
 wait_time = 7.0

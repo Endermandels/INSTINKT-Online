@@ -8,8 +8,11 @@ const FRICTION = 0.9
 
 var username: String = ""
 
+var misting = false
+
 @export var social_distancing = 100
 @export var stink_push_intensity = 0.7
+@export var sprayed_slowness = 80
 
 @onready var anim_player := $AnimationPlayer
 @onready var sprite := $Sprite2D
@@ -62,7 +65,7 @@ func update_username(updated_username: String):
 
 func _apply_animations(delta: float):
 	# Do nothing while spraying
-	if anim_player.current_animation == "spray":
+	if anim_player.current_animation.contains("spray"):
 		return
 	
 	var h_dir := input.h_dir
@@ -79,8 +82,17 @@ func _apply_animations(delta: float):
 	elif velocity.length() < 20:
 		anim_player.play("idle")
 
-	if input.use_special:
+	if input.use_long_spray:
 		anim_player.play("spray")
+	elif input.use_shotgun_spray:
+		anim_player.play("shotgun_spray")
+	elif input.use_mist_spray and not misting:
+		anim_player.play("mist_spray", -1, 3, false)
+		misting = true
+	
+	# Allow player to move while holding down mist
+	if not input.use_mist_spray:
+		misting = false
 
 func _rollback_tick(delta: float, tick: float, is_fresh: bool):
 	if input.teleport_pos != Vector2.ZERO:
@@ -102,16 +114,18 @@ func _apply_movement(delta: float):
 			dir -= global_position.direction_to(player.global_position) * stink_push_intensity
 	
 	# Do not move while playing the spray animation
-	if anim_player.current_animation == "spray":
+	if anim_player.current_animation.contains("spray") and anim_player.current_animation != "mist_spray":
 		dir = Vector2.ZERO
 	
 	if dir != Vector2.ZERO:
-		velocity = velocity.lerp(dir*MAX_SPEED, ACCEL)
+		# Slow sprayed players down
+		var adjusted_speed = MAX_SPEED - (stats.stink_intensity**3)*sprayed_slowness
+		velocity = velocity.lerp(dir*adjusted_speed, ACCEL)
 		if step_cooldown_timer.is_stopped():
 			step_cooldown_timer.start()
 	else:
 		step_cooldown_timer.stop()
-		velocity = velocity.lerp(dir*MAX_SPEED, FRICTION)
+		velocity = velocity.lerp(Vector2.ZERO, FRICTION)
 	
 	velocity *= NetworkTime.physics_factor # Correct velocity based on synced network tick loop
 	move_and_slide()

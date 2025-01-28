@@ -4,7 +4,9 @@ class_name MultiplayerInput
 # Synced
 var h_dir: float = 0.0 # horizontal direction
 var v_dir: float = 0.0 # vertical direction
-var use_special: bool = false
+var use_long_spray: bool = false
+var use_shotgun_spray: bool = false
+var use_mist_spray: bool = false
 var mouse_pos: Vector2 = Vector2.ZERO
 var teleport_pos: Vector2 = Vector2.ZERO
 
@@ -28,7 +30,9 @@ func _ready():
 
 	h_dir = Input.get_axis("ui_left", "ui_right")
 	v_dir = Input.get_axis("ui_up", "ui_down")
-	use_special = Input.is_action_just_pressed("special")
+	use_long_spray = Input.is_action_just_pressed("long_spray")
+	use_shotgun_spray = Input.is_action_just_pressed("shotgun_spray")
+	use_mist_spray = Input.is_action_just_pressed("mist_spray")
 
 func _on_chat_opened():
 	pause_input = true
@@ -46,9 +50,12 @@ func _gather():
 		return
 	
 	# Allow people to spray while chatting :P
-	use_special = Input.is_action_pressed("special")
-	if use_special:
+	use_long_spray = Input.is_action_pressed("long_spray")
+	use_shotgun_spray = Input.is_action_pressed("shotgun_spray")
+	use_mist_spray = Input.is_action_pressed("mist_spray")
+	if use_long_spray or use_shotgun_spray or use_mist_spray:
 		mouse_pos = get_global_mouse_position()
+	
 	
 	# Do not allow player to move while chatting
 	if pause_input:
