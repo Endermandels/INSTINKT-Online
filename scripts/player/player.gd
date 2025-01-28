@@ -13,6 +13,8 @@ var misting = false
 @export var social_distancing = 100
 @export var stink_push_intensity = 0.7
 @export var sprayed_slowness = 80
+@export var camera_zoom_max = 5
+@export var camera_zoom_min = 0.5
 
 @onready var anim_player := $AnimationPlayer
 @onready var sprite := $Sprite2D
@@ -140,7 +142,7 @@ func _on_hud_commands_zoom_camera(amount: float):
 	if amount <= 0:
 		return
 	camera.zoom = Vector2(amount, amount)
-	hud.scale = Vector2(0.5/amount, 0.5/amount)
+	hud.scale = Vector2(camera_zoom_min/amount, camera_zoom_min/amount)
 
 func _on_hud_commands_set_speed(new_speed: float):
 	_set_speed.rpc_id(1, new_speed)
@@ -153,7 +155,18 @@ func _set_speed(new_speed: float):
 func _on_hud_commands_toggle_collision():
 	collision.set_deferred("disabled", not collision.disabled)
 
+func _zoom_camera():
+	if Input.is_action_just_released("MWU"):
+		camera.zoom = camera.zoom * 1.1
+		camera.zoom = camera.zoom.clampf(camera_zoom_min, camera_zoom_max)
+		hud.scale = Vector2(camera_zoom_min/camera.zoom.x, camera_zoom_min/camera.zoom.y)
+	if Input.is_action_just_released("MWD"):
+		camera.zoom = camera.zoom / 1.1
+		camera.zoom = camera.zoom.clampf(camera_zoom_min, camera_zoom_max)
+		hud.scale = Vector2(camera_zoom_min/camera.zoom.x, camera_zoom_min/camera.zoom.y)
+
 func _process(delta: float) -> void:
 	if not multiplayer.is_server() or MultiplayerManager.host_mode_enabled:
 		# For All Players on Screen
 		_apply_animations(delta)
+		_zoom_camera()
