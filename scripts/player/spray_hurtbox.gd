@@ -9,6 +9,7 @@ class_name SprayHurtbox
 @onready var particles := $GPUParticles2D
 
 var tween: Tween
+var stink_wear_off_time = 0
 
 signal sprayed
 signal effects_resolved # When the spray dissapates
@@ -18,6 +19,7 @@ func _ready():
 	hud_commands.connect("clear_stink", _on_hud_commands_clear_stink.rpc)
 	hud_commands.connect("get_sprayed", get_sprayed.rpc)
 	particles.emitting = false
+	stink_wear_off_time = timer.wait_time
 
 func _process(delta: float) -> void:
 	if stats.stink_intensity > 0:
@@ -31,12 +33,15 @@ func _apply_spray_effects():
 	particles.emitting = true
 
 @rpc("any_peer", "call_local", "reliable")
-func get_sprayed():
+func get_sprayed(wear_off_speed=1):
+	# wear_off_speed specifies how fast the stink_intensity decreases over time
 	if tween:
 		tween.kill()
 	_apply_spray_effects()
 	sprayed.emit()
-	timer.start()
+	if wear_off_speed <= 0:
+		wear_off_speed = 1
+	timer.start(stink_wear_off_time / wear_off_speed)
 
 @rpc("any_peer", "call_local", "reliable")
 func _on_timer_timeout():

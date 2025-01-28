@@ -24,7 +24,7 @@ func _search_for_hurtboxes():
 	
 	if len(closest_hurtboxes) > 0:
 		for hurtbox in closest_hurtboxes:
-			hurtbox.get_sprayed.rpc()
+			hurtbox.get_sprayed.rpc(3)
 
 func _process(delta: float) -> void:
 	_search_for_hurtboxes()
