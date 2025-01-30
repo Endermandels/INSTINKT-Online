@@ -39,9 +39,14 @@ func get_sprayed(wear_off_speed=1):
 		tween.kill()
 	_apply_spray_effects()
 	sprayed.emit()
+	
 	if wear_off_speed <= 0:
+	# Add to the remaining time
 		wear_off_speed = 1
-	timer.start(stink_wear_off_time / wear_off_speed)
+	var add_to_time = stink_wear_off_time / wear_off_speed
+	if timer.time_left > 0:
+		add_to_time /= 4 # reduce impact of further spraying
+	timer.start(timer.time_left + add_to_time)
 
 @rpc("any_peer", "call_local", "reliable")
 func _on_timer_timeout():

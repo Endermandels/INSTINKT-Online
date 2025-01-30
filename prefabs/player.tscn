@@ -270,9 +270,9 @@ turbulence_initial_displacement_max = 1.49012e-06
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dllko"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b21eq"]
-
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_we4jl"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b21eq"]
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("chat", "spray_fx", "debug_info", "input")]
 y_sort_enabled = true
@@ -567,7 +567,7 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxEmpty_6ly25")
 
-[node name="DebugInfo" type="Control" parent="HUD" node_paths=PackedStringArray("player", "stats", "hud_commands")]
+[node name="DebugInfo" type="Control" parent="HUD" node_paths=PackedStringArray("player", "stats", "hud_commands", "spray_timer")]
 z_index = 10
 anchors_preset = 0
 offset_left = -313.0
@@ -578,6 +578,7 @@ script = ExtResource("18_bxl66")
 player = NodePath("../..")
 stats = NodePath("../../Stats")
 hud_commands = NodePath("../HUDCommands")
+spray_timer = NodePath("../../SprayHurtbox/SprayTimer")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HUD/DebugInfo"]
 layout_mode = 0
@@ -593,6 +594,13 @@ theme_override_font_sizes/font_size = 8
 theme_override_styles/normal = SubResource("StyleBoxEmpty_dllko")
 text = "position: (1000.0, 1000.0)"
 
+[node name="PID" type="Label" parent="HUD/DebugInfo/VBoxContainer"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("StyleBoxEmpty_we4jl")
+text = "pid: 1"
+
 [node name="StinkIntensity" type="Label" parent="HUD/DebugInfo/VBoxContainer"]
 modulate = Color(0, 0, 0, 1)
 layout_mode = 2
@@ -600,9 +608,9 @@ theme_override_font_sizes/font_size = 8
 theme_override_styles/normal = SubResource("StyleBoxEmpty_b21eq")
 text = "stink: 0.0"
 
-[node name="PID" type="Label" parent="HUD/DebugInfo/VBoxContainer"]
+[node name="SprayTimeLeft" type="Label" parent="HUD/DebugInfo/VBoxContainer"]
 modulate = Color(0, 0, 0, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 theme_override_styles/normal = SubResource("StyleBoxEmpty_we4jl")
-text = "pid: 1"
+text = "stink time:"
