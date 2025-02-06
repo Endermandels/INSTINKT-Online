@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=46 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
@@ -269,6 +269,8 @@ turbulence_noise_scale = 3.211
 turbulence_initial_displacement_min = 1.49012e-06
 turbulence_initial_displacement_max = 1.49012e-06
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wah1k"]
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6ly25"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dllko"]
@@ -528,6 +530,7 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("8_p4sqx")
+max_chats = 10
 
 [node name="ChatDisplayContainer" type="CenterContainer" parent="HUD/Chat"]
 layout_mode = 0
@@ -557,6 +560,38 @@ expand_to_text_length = true
 [node name="ChatDisplayTimer" type="Timer" parent="HUD/Chat"]
 wait_time = 7.0
 one_shot = true
+
+[node name="GlobalChat" type="Panel" parent="HUD/Chat"]
+self_modulate = Color(0.156863, 0, 0.243137, 0.52549)
+layout_mode = 0
+offset_left = -307.0
+offset_top = 72.0
+offset_right = -156.0
+offset_bottom = 170.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HUD/Chat/GlobalChat"]
+layout_mode = 2
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 150.0
+offset_bottom = 93.0
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/Chat/GlobalChat/ScrollContainer"]
+custom_minimum_size = Vector2(135, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 3
+alignment = 2
+
+[node name="Label" type="Label" parent="HUD/Chat/GlobalChat/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(135, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("StyleBoxEmpty_wah1k")
+text = "Ender: Something or other"
+autowrap_mode = 3
 
 [node name="Username" type="CenterContainer" parent="HUD"]
 layout_mode = 0
