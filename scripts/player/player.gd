@@ -7,7 +7,6 @@ const ACCEL = 0.7
 const FRICTION = 0.9
 
 var username: String = ""
-
 var misting = false
 
 @export var social_distancing = 100

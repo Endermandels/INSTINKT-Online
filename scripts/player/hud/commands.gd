@@ -3,6 +3,8 @@ class_name HUDCommands
 
 @export var chat: Chat
 
+var players: Node2D
+
 signal clear_stink
 signal get_sprayed
 signal toggle_debug
@@ -28,7 +30,13 @@ func _get_sprayed(args: Array[String]):
 # Has Arguments #
 
 func _teleport(args: Array[String]):
-	if len(args) < 3:
+	if len(args) < 2:
+		return
+	if len(args) == 2:
+		# Teleport to player with given PID
+		var player: Player = players.get_node_or_null(args[1])
+		if player:
+			teleport.emit(player.global_position.x, player.global_position.y)
 		return
 	teleport.emit(float(args[1])*1000, float(args[2])*1000)
 
@@ -67,6 +75,10 @@ var COMMANDS = {
 
 func _ready():
 	chat.connect("command_submitted", _on_chat_command_submitted)
+	players = get_tree().current_scene.get_node("Y-Sorted/Players")
+	if not players:
+		print('Players scene moved')
+		get_tree().quit(1)
 
 func _on_chat_command_submitted(command: String):
 	print("Received command: %s" % command)
