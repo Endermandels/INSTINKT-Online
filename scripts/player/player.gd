@@ -63,6 +63,7 @@ func update_username(updated_username: String):
 		return
 	username = updated_username
 	username_label.text = updated_username
+	stats.username = updated_username
 
 func _apply_animations(delta: float):
 	# Do nothing while spraying

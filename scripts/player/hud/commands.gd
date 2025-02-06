@@ -33,10 +33,15 @@ func _teleport(args: Array[String]):
 	if len(args) < 2:
 		return
 	if len(args) == 2:
-		# Teleport to player with given PID
+		# Teleport to first player with given PID or username
 		var player: Player = players.get_node_or_null(args[1])
 		if player:
 			teleport.emit(player.global_position.x, player.global_position.y)
+			return
+		for p: Player in players.get_children():
+			if p.stats.username == args[1]:
+				teleport.emit(p.global_position.x, p.global_position.y)
+				return
 		return
 	teleport.emit(float(args[1])*1000, float(args[2])*1000)
 
