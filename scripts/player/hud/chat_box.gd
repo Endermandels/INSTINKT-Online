@@ -4,6 +4,7 @@ class_name Chat
 @onready var chat_display_label := $ChatDisplayContainer/Label
 @onready var chat_box := $ChatBoxContainer/ChatBox
 @onready var chat_display_timer := $ChatDisplayTimer
+@onready var global_chat_panel := $GlobalChat
 @onready var global_chat_box := $GlobalChat/ScrollContainer/VBoxContainer
 
 const COMMAND_SYMBOL = '\\'
@@ -19,6 +20,8 @@ signal command_submitted(command: String)
 
 func _ready():
 	chat_box.hide()
+	if not is_multiplayer_authority():
+		global_chat_panel.hide()
 	chat_display_label.modulate.a = 0
 	chat_box.connect("text_submitted", _on_chat_box_text_submitted)
 	chat_box.connect("text_changed", _on_chat_box_text_changed.rpc)
