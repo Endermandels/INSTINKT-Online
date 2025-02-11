@@ -16,6 +16,10 @@ func _ready() -> void:
 	multiplayer.connection_failed.connect(connection_failed.emit)
 	multiplayer.server_disconnected.connect(connection_failed.emit)
 
+func send_message(message: String):
+	for p: Player in _players_spawn_node.get_children():
+		p.update_global_chat.rpc(message)
+
 func join_host(server_ip: String = "localhost", username: String = ""):
 	print("Joining Host...")
 	var client_peer = ENetMultiplayerPeer.new()

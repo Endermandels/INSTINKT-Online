@@ -65,6 +65,10 @@ func update_username(updated_username: String):
 	username_label.text = updated_username
 	stats.username = updated_username
 
+@rpc("any_peer", "call_local", "reliable")
+func update_global_chat(message: String):
+	chat.update_global_chat(message)
+
 func _apply_animations(delta: float):
 	# Do nothing while spraying
 	if anim_player.current_animation.contains("spray"):

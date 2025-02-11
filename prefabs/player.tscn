@@ -524,13 +524,13 @@ one_shot = true
 explosiveness = 1.0
 local_coords = true
 
-[node name="Chat" type="Control" parent="HUD"]
+[node name="Chat" type="Control" parent="HUD" node_paths=PackedStringArray("player")]
 z_index = 11
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("8_p4sqx")
-max_chats = 10
+player = NodePath("../..")
 
 [node name="ChatDisplayContainer" type="CenterContainer" parent="HUD/Chat"]
 layout_mode = 0

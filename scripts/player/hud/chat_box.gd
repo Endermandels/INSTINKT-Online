@@ -12,6 +12,7 @@ const COMMAND_SYMBOL = '\\'
 var tween: Tween = null
 
 @export var max_chats = 50 # Maximum number of chats stored in vbox
+@export var player: Player
 
 signal chat_opened
 signal chat_closed
@@ -78,6 +79,20 @@ func send_message(message: String):
 	var sender_id = multiplayer.get_remote_sender_id()
 	print("Player %s messaged: %s" % [sender_id, message])
 	update_chat_label.rpc(message) # Update the chat message across all clients
+	MultiplayerManager.send_message(player.username + ": " + message)
+
+func update_global_chat(message: String):
+	if global_chat_box.get_children().size() > max_chats:
+		global_chat_box.get_child(0).queue_free()
+	
+	var global_chat_label = Label.new()
+	global_chat_label.custom_minimum_size = Vector2(135, 0)
+	global_chat_label.add_theme_font_size_override("font_size", 8)
+	global_chat_label.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	global_chat_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	global_chat_label.text = message
+	
+	global_chat_box.add_child(global_chat_label)
 
 @rpc("any_peer", "call_local", "reliable")
 func update_chat_label(message: String):
@@ -88,18 +103,6 @@ func update_chat_label(message: String):
 		chat_display_label.text = message.strip_edges()
 		chat_display_label.modulate.a = 1
 		chat_display_timer.start()
-		
-		if global_chat_box.get_children().size() > max_chats:
-			global_chat_box.get_child(0).queue_free()
-		
-		var global_chat_label = Label.new()
-		global_chat_label.custom_minimum_size = Vector2(135, 0)
-		global_chat_label.add_theme_font_size_override("font_size", 8)
-		global_chat_label.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
-		global_chat_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		global_chat_label.text = chat_display_label.text
-		
-		global_chat_box.add_child(global_chat_label)
 
 func _on_chat_display_timer_timeout():
 	tween = get_tree().create_tween()
