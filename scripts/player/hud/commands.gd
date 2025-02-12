@@ -9,6 +9,7 @@ signal clear_stink
 signal get_sprayed
 signal toggle_debug
 signal toggle_collision
+signal list_users
 signal teleport(x: float, y: float)
 signal zoom_camera(amount: float)
 signal set_speed(new_speed: float)
@@ -26,6 +27,9 @@ func _clear_stink(args: Array[String]):
 
 func _get_sprayed(args: Array[String]):
 	get_sprayed.emit()
+
+func _list_users(args: Array[String]):
+	list_users.emit()
 
 # Has Arguments #
 
@@ -70,6 +74,9 @@ var COMMANDS = {
 	
 	, 'spray': _get_sprayed
 	, 'sp': _get_sprayed
+	
+	, 'list': _list_users
+	, 'ls': _list_users
 	
 	, 'teleport': _teleport
 	, 'tp': _teleport

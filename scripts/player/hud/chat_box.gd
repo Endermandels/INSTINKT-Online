@@ -10,9 +10,11 @@ class_name Chat
 const COMMAND_SYMBOL = '\\'
 
 var tween: Tween = null
+var players: Node2D = null
 
 @export var max_chats = 50 # Maximum number of chats stored in vbox
 @export var player: Player
+@export var hud_commands: HUDCommands
 
 signal chat_opened
 signal chat_closed
@@ -28,6 +30,12 @@ func _ready():
 	chat_box.connect("text_changed", _on_chat_box_text_changed.rpc)
 	chat_display_timer.connect("timeout", _on_chat_display_timer_timeout)
 	self.connect("chat_closed", _on_chat_closed.rpc)
+	hud_commands.connect("list_users", _list_users)
+	
+	players = get_tree().current_scene.get_node("Y-Sorted/Players")
+	if not players:
+		print('Players scene moved')
+		get_tree().quit(1)
 
 func _handle_toggle():
 	if Input.is_action_just_pressed("chat", true):
@@ -81,12 +89,19 @@ func send_message(message: String):
 	update_chat_label.rpc(message) # Update the chat message across all clients
 	MultiplayerManager.send_message(player.username + ": " + message)
 
-func update_global_chat(message: String):
+func _list_users():
+	var message = "----- Online -----\n"
+	for p: Player in players.get_children():
+		message += "  * " + p.stats.username + "\n"
+	update_global_chat(message, Color(0.8, 0.8, 0.8))
+
+func update_global_chat(message: String, col=Color(1, 1, 1)):
 	if global_chat_box.get_children().size() > max_chats:
 		global_chat_box.get_child(0).queue_free()
 	
 	var global_chat_label = Label.new()
 	global_chat_label.custom_minimum_size = Vector2(135, 0)
+	global_chat_label.add_theme_color_override("font_color", col)
 	global_chat_label.add_theme_font_size_override("font_size", 8)
 	global_chat_label.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
 	global_chat_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

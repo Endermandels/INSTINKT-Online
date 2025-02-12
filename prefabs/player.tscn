@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=3 uid="uid://el7mkjte4xea"]
+[gd_scene load_steps=45 format=3 uid="uid://el7mkjte4xea"]
 
 [ext_resource type="Texture2D" uid="uid://o10lqst4vy0i" path="res://assets/art/Sprite Sheet Skunk.png" id="1_0hdi7"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_568lg"]
@@ -269,8 +269,6 @@ turbulence_noise_scale = 3.211
 turbulence_initial_displacement_min = 1.49012e-06
 turbulence_initial_displacement_max = 1.49012e-06
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wah1k"]
-
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6ly25"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dllko"]
@@ -524,13 +522,14 @@ one_shot = true
 explosiveness = 1.0
 local_coords = true
 
-[node name="Chat" type="Control" parent="HUD" node_paths=PackedStringArray("player")]
+[node name="Chat" type="Control" parent="HUD" node_paths=PackedStringArray("player", "hud_commands")]
 z_index = 11
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("8_p4sqx")
 player = NodePath("../..")
+hud_commands = NodePath("../HUDCommands")
 
 [node name="ChatDisplayContainer" type="CenterContainer" parent="HUD/Chat"]
 layout_mode = 0
@@ -584,14 +583,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 3
 alignment = 2
-
-[node name="Label" type="Label" parent="HUD/Chat/GlobalChat/ScrollContainer/VBoxContainer"]
-custom_minimum_size = Vector2(135, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 8
-theme_override_styles/normal = SubResource("StyleBoxEmpty_wah1k")
-text = "Ender: Something or other"
-autowrap_mode = 3
 
 [node name="Username" type="CenterContainer" parent="HUD"]
 layout_mode = 0
